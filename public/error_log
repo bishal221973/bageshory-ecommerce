@@ -1,0 +1,15 @@
+[22-May-2026 17:12:20 UTC] PHP Warning:  require(/home/gkitsolu/mccnp.com/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/gkitsolu/mccnp.com/public/index.php on line 34
+[22-May-2026 17:12:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/gkitsolu/mccnp.com/public/../vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/gkitsolu/mccnp.com/public/index.php:34
+Stack trace:
+#0 {main}
+  thrown in /home/gkitsolu/mccnp.com/public/index.php on line 34
+[22-May-2026 17:12:59 UTC] PHP Warning:  require(/home/gkitsolu/mccnp.com/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/gkitsolu/mccnp.com/public/index.php on line 34
+[22-May-2026 17:12:59 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/gkitsolu/mccnp.com/public/../vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/gkitsolu/mccnp.com/public/index.php:34
+Stack trace:
+#0 {main}
+  thrown in /home/gkitsolu/mccnp.com/public/index.php on line 34
+[24-May-2026 02:45:28 UTC] PHP Warning:  require(/home/gkitsolu/mccnp.com/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/gkitsolu/mccnp.com/public/index.php on line 34
+[24-May-2026 02:45:28 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/gkitsolu/mccnp.com/public/../vendor/autoload.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/gkitsolu/mccnp.com/public/index.php:34
+Stack trace:
+#0 {main}
+  thrown in /home/gkitsolu/mccnp.com/public/index.php on line 34
