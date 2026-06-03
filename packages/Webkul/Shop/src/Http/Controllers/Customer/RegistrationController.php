@@ -55,6 +55,8 @@ class RegistrationController extends Controller
         if (empty($email)) {
             $email = $registrationRequest->input('phone') . '@mcc.com';
         }
+
+        // return core()->getConfigData('customer.settings.email.verification');
         $data = array_merge($registrationRequest->only([
             'first_name',
             'last_name',
@@ -118,11 +120,16 @@ class RegistrationController extends Controller
         } else {
             session()->flash('success', trans('shop::app.customers.signup-form.success'));
         }
-        session()->put('customer_phone', $data['phone']);
-        $otpService->sendCustomerVerificationOtp(
-            $data['phone']
-        );
-        return redirect()->route('customer.verification');
+        if (core()->getConfigData('customer.settings.email.verification')) {
+
+            session()->put('customer_phone', $data['phone']);
+
+
+            $otpService->sendCustomerVerificationOtp(
+                $data['phone']
+            );
+            return redirect()->route('customer.verification');
+        }
         return redirect()->route('shop.customer.session.index');
     }
 

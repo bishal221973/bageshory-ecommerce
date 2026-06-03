@@ -33,7 +33,7 @@ class SessionController extends Controller
      */
     public function store(LoginRequest $loginRequest)
     {
-        $credentials = $loginRequest->only(['email', 'password']);
+        $credentials = $loginRequest->only(['phone', 'password']);
 
         $credentials['channel_id'] = core()->getCurrentChannel()->id;
 
@@ -56,7 +56,7 @@ class SessionController extends Controller
 
             Cookie::queue(Cookie::make('enable-resend', 'true', 1));
 
-            Cookie::queue(Cookie::make('email-for-resend', $loginRequest->get('email'), 1));
+            Cookie::queue(Cookie::make('phone-for-resend', $loginRequest->get('email'), 1));
 
             auth()->guard('customer')->logout();
 

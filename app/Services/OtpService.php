@@ -27,12 +27,7 @@ class OtpService
 
         $message = "Your verification code is {$otp}. Valid for 5 minutes.";
 
-        // Http::asForm()->post('http://api.sparrowsms.com/v2/sms/', [
-        //     'token' => config('services.sparrow.token'),
-        //     'from'  => config('services.sparrow.from'),
-        //     'to'    => $phoneNumber,
-        //     'text'  => $message,
-        // ]);
+        
         
        $api_url = "http://api.sparrowsms.com/v2/sms/?".
             http_build_query(array(
@@ -41,7 +36,7 @@ class OtpService
                 'to'    => $phoneNumber,
                 'text'  => $message));
 
-        return $response = file_get_contents($api_url);
+        $response = file_get_contents($api_url);
         
 
         return $otp;

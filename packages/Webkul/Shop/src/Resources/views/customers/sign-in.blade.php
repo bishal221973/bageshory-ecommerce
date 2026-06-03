@@ -56,18 +56,19 @@
                     <!-- Email -->
                     <x-shop::form.control-group>
                         <x-shop::form.control-group.label class="required">
-                            @lang('shop::app.customers.login-form.email')
+                            <!-- @lang('shop::app.customers.login-form.email') -->
+                             Phone Number
                         </x-shop::form.control-group.label>
 
                         <x-shop::form.control-group.control
-                            type="email"
+                            type="text"
                             class="px-6 py-4 max-md:py-3 max-sm:py-2"
-                            name="email"
-                            rules="required|email"
+                            name="phone"
+                            rules="required"
                             value=""
-                            :label="trans('shop::app.customers.login-form.email')"
-                            placeholder="email@example.com"
-                            :aria-label="trans('shop::app.customers.login-form.email')"
+                            label="Phone"
+                            placeholder="98XXXXXXXX"
+                            aria-label="Phone"
                             aria-required="true"
                         />
 
