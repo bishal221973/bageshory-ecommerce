@@ -15,6 +15,7 @@ use Webkul\Shop\Http\Controllers\Controller;
 use Webkul\Shop\Http\Requests\Customer\RegistrationRequest;
 use Webkul\Shop\Mail\Customer\EmailVerificationNotification;
 use Webkul\Shop\Mail\Customer\RegistrationNotification;
+use App\Services\OtpService;
 
 class RegistrationController extends Controller
 {
@@ -44,19 +45,25 @@ class RegistrationController extends Controller
      *
      * @return Response
      */
-    public function store(RegistrationRequest $registrationRequest)
+    public function store(RegistrationRequest $registrationRequest, OtpService $otpService)
     {
         $customerGroup = core()->getConfigData('customer.settings.create_new_account_options.default_group');
 
         $subscription = $this->subscriptionRepository->findOneWhere(['email' => request()->input('email')]);
+        $email = $registrationRequest->input('email');
 
+        if (empty($email)) {
+            $email = $registrationRequest->input('phone') . '@mcc.com';
+        }
         $data = array_merge($registrationRequest->only([
             'first_name',
             'last_name',
             'email',
+            'phone',
             'password_confirmation',
             'is_subscribed',
         ]), [
+            'email' => $email,
             'password' => bcrypt(request()->input('password')),
             'api_token' => Str::random(80),
             'is_verified' => ! core()->getConfigData('customer.settings.email.verification'),
@@ -66,6 +73,15 @@ class RegistrationController extends Controller
             'subscribed_to_news_letter' => (bool) (request()->input('is_subscribed') ?? $subscription?->is_subscribed),
         ]);
 
+
+        //     $api_url = "http://api.sparrowsms.com/v2/sms/?".
+        //     http_build_query(array(
+        //         'token' => 'v2_zzt1JiNWA5QgYK2KpXlwmOAzp0C.49cG',
+        //         'from'  => 'Demo',
+        //         'to'    => '9814668499',
+        //         'text'  => 'SMS Message to be sent'));
+
+        // return $response = file_get_contents($api_url);
         Event::dispatch('customer.registration.before');
 
         $customer = $this->customerRepository->create($data);
@@ -102,7 +118,11 @@ class RegistrationController extends Controller
         } else {
             session()->flash('success', trans('shop::app.customers.signup-form.success'));
         }
-
+        session()->put('customer_phone', $data['phone']);
+        $otpService->sendCustomerVerificationOtp(
+            $data['phone']
+        );
+        return redirect()->route('customer.verification');
         return redirect()->route('shop.customer.session.index');
     }
 

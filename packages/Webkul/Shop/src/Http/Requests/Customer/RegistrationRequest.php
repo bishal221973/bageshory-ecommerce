@@ -27,7 +27,7 @@ class RegistrationRequest extends FormRequest
         $rules = [
             'first_name' => 'string|required',
             'last_name' => 'string|required',
-            'email' => 'email|required|unique:customers,email,NULL,id,channel_id,'.core()->getCurrentChannel()->id,
+            'email' => 'email|nullable|unique:customers,email,NULL,id,channel_id,'.core()->getCurrentChannel()->id,
             'password' => 'confirmed|min:6|required',
         ];
 
