@@ -89,4 +89,6 @@ return [
     TaxServiceProvider::class,
     ThemeServiceProvider::class,
     UserServiceProvider::class,
+    Webkul\EsewaPayment\Providers\EsewaPaymentServiceProvider::class,
+
 ];
