@@ -8,45 +8,33 @@ class EsewaController extends Controller
 {
     public function redirect()
     {
-        $amount = 100;
+        $amount = "100.00";
+
+        $uuid = time() . rand(1000, 9999);
+        $productCode = "EPAYTEST";
 
         $data = [
-            'amount'                  => $amount,
-            'tax_amount'              => 0,
-            'product_service_charge'  => 0,
-            'product_delivery_charge' => 0,
+            'amount' => $amount,
+            'tax_amount' => "0.00",
+            'product_service_charge' => "0.00",
+            'product_delivery_charge' => "0.00",
+            'total_amount' => $amount,
+            'transaction_uuid' => $uuid,
+            'product_code' => $productCode,
         ];
-
-        $data['total_amount'] = $data['amount']
-            + $data['tax_amount']
-            + $data['product_service_charge']
-            + $data['product_delivery_charge'];
-
-        $data['transaction_uuid'] = uniqid();
-
-        // Sandbox
-        $data['product_code'] = 'EPAYTEST';
 
         $secretKey = '8gBm/:&EnhH.1/q';
 
-        $message = sprintf(
-            'total_amount=%s,transaction_uuid=%s,product_code=%s',
-            $data['total_amount'],
-            $data['transaction_uuid'],
-            $data['product_code']
-        );
+        $message = "total_amount={$amount},transaction_uuid={$uuid},product_code={$productCode}";
 
         $data['signature'] = base64_encode(
-            hash_hmac(
-                'sha256',
-                $message,
-                $secretKey,
-                true
-            )
+            hash_hmac('sha256', $message, $secretKey, true)
         );
 
         $data['success_url'] = route('esewa.success');
         $data['failure_url'] = route('esewa.failure');
+
+        // dd($data);
 
         return view('esewapayment::redirect', compact('data'));
     }
