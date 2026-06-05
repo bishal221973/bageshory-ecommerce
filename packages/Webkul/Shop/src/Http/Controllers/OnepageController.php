@@ -50,7 +50,10 @@ class OnepageController extends Controller
             return redirect()->route('shop.checkout.cart.index');
         }
 
+
         $cart = Cart::getCart();
+
+        session()->put('cart_id', $cart->id);
 
         /**
          * If cart is has downloadable items and customer is not logged in

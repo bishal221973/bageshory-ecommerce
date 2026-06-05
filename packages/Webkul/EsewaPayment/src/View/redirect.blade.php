@@ -42,6 +42,7 @@
     <button type="submit">
         Pay with eSewa
     </button>
+    <!-- {{Webkul\Checkout\Facades\Cart::getCart()}} -->
 </form>
 
 <script>
