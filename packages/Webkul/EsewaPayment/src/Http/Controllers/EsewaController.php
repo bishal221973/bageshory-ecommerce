@@ -7,37 +7,41 @@ use Illuminate\Routing\Controller;
 class EsewaController extends Controller
 {
     public function redirect()
-    {
-        $amount = "100.00";
+{
+    // 1. eSewa requires amounts to have exactly 2 decimal points (e.g., "100.00")
+    $amount = "100.00"; 
 
-        $uuid = time() . rand(1000, 9999);
-        $productCode = "EPAYTEST";
+    $uuid = time() . rand(1000, 9999);
+    $productCode = "EPAYTEST"; // Official active sandbox product code
 
-        $data = [
-            'amount' => $amount,
-            'tax_amount' => "0.00",
-            'product_service_charge' => "0.00",
-            'product_delivery_charge' => "0.00",
-            'total_amount' => $amount,
-            'transaction_uuid' => $uuid,
-            'product_code' => $productCode,
-        ];
+    $data = [
+        'amount' => $amount,
+        'tax_amount' => "0.00",
+        'product_service_charge' => "0.00",
+        'product_delivery_charge' => "0.00",
+        'total_amount' => $amount,
+        'transaction_uuid' => $uuid,
+        'product_code' => $productCode,
+    ];
 
-        $secretKey = '8gBm/:&EnhH.1/q';
+    // Official sandbox secret key for EPAYTEST
+    $secretKey = '8gBm/:&EnhH.1/q'; 
 
-        $message = "total_amount={$amount},transaction_uuid={$uuid},product_code={$productCode}";
+    // FIX: Parameters MUST have commas, but absolutely NO spaces.
+    $message = "total_amount={$amount},transaction_uuid={$uuid},product_code={$productCode}";
 
-        $data['signature'] = base64_encode(
-            hash_hmac('sha256', $message, $secretKey, true)
-        );
+    // Generate the raw HMAC-SHA256 binary hash, then base64 encode it
+    $data['signature'] = base64_encode(
+        hash_hmac('sha256', $message, $secretKey, true)
+    );
 
-        $data['success_url'] = route('esewa.success');
-        $data['failure_url'] = route('esewa.failure');
+    // Dynamic routing URLs for local development
+    $data['success_url'] = url('/esewa/success');
+    $data['failure_url'] = url('/esewa/failure');
 
-        // dd($data);
+    return view('esewapayment::redirect', compact('data'));
+}
 
-        return view('esewapayment::redirect', compact('data'));
-    }
 
     public function success()
     {

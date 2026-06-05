@@ -90,5 +90,7 @@ return [
     ThemeServiceProvider::class,
     UserServiceProvider::class,
     Webkul\EsewaPayment\Providers\EsewaPaymentServiceProvider::class,
+    Webkul\CreditPayment\Providers\CreditPaymentServiceProvider::class,
+    Webkul\ConnectIPS\Providers\ConnectIPSServiceProvider::class,
 
 ];

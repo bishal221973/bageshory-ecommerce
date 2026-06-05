@@ -106,7 +106,9 @@
             "Webkul\\Tax\\": "packages/Webkul/Tax/src",
             "Webkul\\Theme\\": "packages/Webkul/Theme/src",
             "Webkul\\User\\": "packages/Webkul/User/src",
-            "Webkul\\EsewaPayment\\": "packages/Webkul/EsewaPayment/src"
+            "Webkul\\EsewaPayment\\": "packages/Webkul/EsewaPayment/src",
+            "Webkul\\CreditPayment\\": "packages/Webkul/CreditPayment/src",
+            "Webkul\\ConnectIPS\\": "packages/Webkul/ConnectIPS/src"
         }
     },
     "autoload-dev": {
