@@ -6,19 +6,19 @@
     :applied="applied"
     @selectAll="selectAll"
     @sort="sort"
-    @actionSuccess="get"
->
+    @actionSuccess="get">
     {{ $slot }}
 </v-datagrid-table>
 
 @pushOnce('scripts')
-    <script
-        type="text/x-template"
-        id="v-datagrid-table-template"
-    >
-        <div class="w-full">
+<script
+    type="text/x-template"
+    id="v-datagrid-table-template">
+    <div class="w-full">
+            <!-- Hell -->
             <div class="table-responsive box-shadow grid w-full overflow-x-auto rounded bg-white dark:bg-gray-900">
-                <slot
+            <!-- Hello    -->
+            <slot
                     name="header"
                     :is-loading="isLoading"
                     :available="available"
@@ -177,92 +177,98 @@
         </div>
     </script>
 
-    <script type="module">
-        app.component('v-datagrid-table', {
-            template: '#v-datagrid-table-template',
+<script type="module">
+    app.component('v-datagrid-table', {
+        template: '#v-datagrid-table-template',
 
-            props: ['isLoading', 'available', 'applied'],
+        props: ['isLoading', 'available', 'applied'],
 
-            computed: {
-                gridsCount() {
-                    let count = this.available.columns.filter((column) => column.visibility).length;
+        computed: {
+            gridsCount() {
+                let count = this.available.columns.filter((column) => column.visibility).length;
 
-                    if (this.available.actions.length) {
-                        ++count;
-                    }
+                if (this.available.actions.length) {
+                    ++count;
+                }
 
-                    if (this.available.massActions.length) {
-                        ++count;
-                    }
+                if (this.available.massActions.length) {
+                    ++count;
+                }
 
-                    return count;
-                },
+                return count;
+            },
+        },
+
+        methods: {
+            /**
+             * Select all records in the datagrid.
+             *
+             * @returns {void}
+             */
+            selectAll() {
+                this.$emit('selectAll');
             },
 
-            methods: {
-                /**
-                 * Select all records in the datagrid.
-                 *
-                 * @returns {void}
-                 */
-                selectAll() {
-                    this.$emit('selectAll');
-                },
+            /**
+             * Perform a sorting operation on the specified column.
+             *
+             * @param {object} column
+             * @returns {void}
+             */
+            sort(column) {
+                this.$emit('sort', column);
+            },
 
-                /**
-                 * Perform a sorting operation on the specified column.
-                 *
-                 * @param {object} column
-                 * @returns {void}
-                 */
-                sort(column) {
-                    this.$emit('sort', column);
-                },
+            /**
+             * Perform the specified action.
+             *
+             * @param {object} action
+             * @returns {void}
+             */
+            performAction(action) {
+                const method = action.method.toLowerCase();
 
-                /**
-                 * Perform the specified action.
-                 *
-                 * @param {object} action
-                 * @returns {void}
-                 */
-                performAction(action) {
-                    const method = action.method.toLowerCase();
+                switch (method) {
+                    case 'get':
+                        window.location.href = action.url;
 
-                    switch (method) {
-                        case 'get':
-                            window.location.href = action.url;
+                        break;
 
-                            break;
-
-                        case 'post':
-                        case 'put':
-                        case 'patch':
-                        case 'delete':
-                            this.$emitter.emit('open-confirm-modal', {
-                                agree: () => {
-                                    this.$axios[method](action.url)
-                                        .then(response => {
-                                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
-
-                                            this.$emit('actionSuccess', response.data);
-                                        })
-                                        .catch((error) => {
-                                            this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-
-                                            this.$emit('actionError', error.response.data);
+                    case 'post':
+                    case 'put':
+                    case 'patch':
+                    case 'delete':
+                        this.$emitter.emit('open-confirm-modal', {
+                            agree: () => {
+                                this.$axios[method](action.url)
+                                    .then(response => {
+                                        this.$emitter.emit('add-flash', {
+                                            type: 'success',
+                                            message: response.data.message
                                         });
-                                }
-                            });
 
-                            break;
+                                        this.$emit('actionSuccess', response.data);
+                                    })
+                                    .catch((error) => {
+                                        this.$emitter.emit('add-flash', {
+                                            type: 'error',
+                                            message: error.response.data.message
+                                        });
 
-                        default:
-                            console.error('Method not supported.');
+                                        this.$emit('actionError', error.response.data);
+                                    });
+                            }
+                        });
 
-                            break;
-                    }
-                },
+                        break;
+
+                    default:
+                        console.error('Method not supported.');
+
+                        break;
+                }
             },
-        });
-    </script>
+        },
+    });
+</script>
 @endpushOnce

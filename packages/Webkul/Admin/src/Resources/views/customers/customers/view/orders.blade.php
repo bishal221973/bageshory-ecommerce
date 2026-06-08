@@ -12,11 +12,12 @@
     </div>
 
     <x-admin::datagrid
-        :src="route('admin.customers.customers.view', [
-            'id'   => $customer->id,
-            'type' => 'orders'
-        ])"
+    :src="route('admin.customers.customers.view', [
+    'id'   => $customer->id,
+    'type' => 'orders'
+    ])"
     >
+    
         <!-- Datagrid Header -->
         <template #header="{
             isLoading,
@@ -25,12 +26,13 @@
             selectAll,
             sort,
             performAction
-        }">
+            }">
             <template v-if="isLoading">
                 <x-admin::shimmer.datagrid.table.head :isMultiRow="true" />
             </template>
 
             <template v-else>
+                <!-- Helo -->
                 <div class="row grid grid-cols-[0.5fr_0.5fr_1fr] grid-rows-1 items-center border-b border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
                     <div
                         class="flex select-none items-center gap-2.5"

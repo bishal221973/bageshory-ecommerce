@@ -55,6 +55,9 @@ class OrderDataGrid extends DataGrid
 
         $this->addFilter('full_name', DB::raw('CONCAT(' . DB::getTablePrefix() . 'orders.customer_first_name, " ", ' . DB::getTablePrefix() . 'orders.customer_last_name)'));
         $this->addFilter('created_at', 'orders.created_at');
+        
+
+        
 
 
 
@@ -68,21 +71,15 @@ class OrderDataGrid extends DataGrid
 
 
 
-
-
-
-        $this->addFilter(
-    'payment_status',
-    DB::raw("
-        CASE
-            WHEN orders.base_grand_total_invoiced >= orders.base_grand_total
-                THEN 'Paid'
-            WHEN orders.base_grand_total_invoiced > 0
-                THEN 'Partially Paid'
-            ELSE 'Unpaid'
-        END
-    ")
-);
+        $this->addFilter('payment_status', DB::raw("
+    CASE
+        WHEN orders.base_grand_total_invoiced >= orders.base_grand_total
+            THEN 'Paid'
+        WHEN orders.base_grand_total_invoiced > 0
+            THEN 'Partially Paid'
+        ELSE 'Unpaid'
+    END
+"));
 
         return $queryBuilder;
     }
@@ -167,26 +164,12 @@ class OrderDataGrid extends DataGrid
             },
         ]);
         $this->addColumn([
-            'index'             => 'payment_status',
-            'label'             => 'Payment Status',
-            'type'              => 'string',
-            'filterable'        => true,
-            'filterable_type'   => 'dropdown',
-            'filterable_options' => [
-                [
-                    'label' => 'Paid',
-                    'value' => 'Paid',
-                ],
-                [
-                    'label' => 'Partially Paid',
-                    'value' => 'Partially Paid',
-                ],
-                [
-                    'label' => 'Unpaid',
-                    'value' => 'Unpaid',
-                ],
-            ],
-            'sortable' => false,
+            'index'      => 'payment_status',
+            'label'      => trans('admin::app.sales.orders.payment-status'),
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => true,
+            'filterable' => true,
         ]);
         $this->addColumn([
             'index' => 'base_grand_total',

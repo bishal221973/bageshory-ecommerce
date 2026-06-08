@@ -122,7 +122,7 @@
                                     </div>
                                 </x-slot>
                             </x-admin::accordion>
-
+                                
                             <!-- Filters Accordion -->
                             <x-admin::accordion class="select-none !rounded-none !border-none !shadow-none">
                                 <x-slot:header class="px-4">
@@ -166,28 +166,30 @@
                                                             </p>
                                                         </div>
                                                     </div>
+                                                    
 
                                                     <div class="mb-2 mt-1.5">
                                                         <x-admin::dropdown>
                                                             <x-slot:toggle>
                                                                 <button
-                                                                    type="button"
-                                                                    class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border bg-white px-2.5 py-1.5 text-center leading-6 text-gray-600 transition-all marker:shadow hover:border-gray-400 focus:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-400 dark:focus:border-gray-400"
+                                                                type="button"
+                                                                class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border bg-white px-2.5 py-1.5 text-center leading-6 text-gray-600 transition-all marker:shadow hover:border-gray-400 focus:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-400 dark:focus:border-gray-400"
                                                                 >
-                                                                    <!-- If Allow Multiple Values -->
-                                                                    <span
-                                                                        class="text-sm text-gray-400 dark:text-gray-400"
-                                                                        v-text="'@lang('admin::app.components.datagrid.filters.select')'"
-                                                                        v-if="column.allow_multiple_values"
-                                                                    >
-                                                                    </span>
-
-                                                                    <!-- If Allow Single Value -->
-                                                                    <span
-                                                                        class="text-sm text-gray-400 dark:text-gray-400"
-                                                                        v-text="column.filterable_options.find((option => option.value === getAppliedColumnValues(column.index)))?.label ?? '@lang('admin::app.components.datagrid.filters.select')'"
-                                                                        v-else
-                                                                    >
+                                                                <!-- If Allow Multiple Values -->
+                                                                <span
+                                                                class="text-sm text-gray-400 dark:text-gray-400"
+                                                                v-text="'@lang('admin::app.components.datagrid.filters.select')'"
+                                                                v-if="column.allow_multiple_values"
+                                                                >
+                                                            </span>
+                                                            
+                                                            <!-- If Allow Single Value -->
+                                                            <span
+                                                            class="text-sm text-gray-400 dark:text-gray-400"
+                                                            v-text="column.filterable_options.find((option => option.value === getAppliedColumnValues(column.index)))?.label ?? '@lang('admin::app.components.datagrid.filters.select')'"
+                                                            v-else
+                                                            >
+                                                            
                                                                     </span>
 
                                                                     <span class="icon-sort-down text-2xl"></span>
@@ -223,6 +225,7 @@
                                                             </p>
                                                         </template>
                                                     </div>
+                                                    
                                                 </template>
 
                                                 <!-- Basic (If Needed) -->
@@ -233,6 +236,7 @@
                                             <div v-else-if="column.type === 'date'">
                                                 <!-- Range -->
                                                 <template v-if="column.filterable_type === 'date_range'">
+                                                    
                                                     <div class="flex items-center justify-between">
                                                         <p
                                                             class="text-xs font-medium text-gray-800 dark:text-white"
@@ -525,7 +529,7 @@
                                                             v-text="column.label"
                                                         >
                                                         </p>
-
+                                                        
                                                         <div
                                                             class="flex items-center gap-x-1.5"
                                                             @click="removeAppliedColumnAllValues(column.index)"

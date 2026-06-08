@@ -142,9 +142,10 @@
                 <!-- Left Component -->
                 <div class="flex flex-1 flex-col gap-2 max-xl:flex-auto">
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.orders.before') !!}
-
+                    
                     @include('admin::customers.customers.view.orders')
-
+                    
+                    <!-- Hello -->
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.orders.after') !!}
 
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.invoices.before') !!}
@@ -165,6 +166,8 @@
 
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.notes.after') !!}
                 </div>
+
+                
 
                 <!-- Right Component -->
                 <div class="flex w-[360px] max-w-full flex-col gap-2 max-sm:w-full">
