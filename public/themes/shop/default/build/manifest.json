@@ -75,6 +75,10 @@
     "file": "assets/payu-Lrh50Ekl.png",
     "src": "src/Resources/assets/images/payu.png"
   },
+  "src/Resources/assets/images/esewa.png": {
+    "file": "assets/esewa-Lrh50Ekl.png",
+    "src": "src/Resources/assets/images/esewa.png"
+  },
   "src/Resources/assets/images/razorpay.png": {
     "file": "assets/razorpay-Cbr80qFP.png",
     "src": "src/Resources/assets/images/razorpay.png"

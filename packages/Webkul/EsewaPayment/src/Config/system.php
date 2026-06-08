@@ -59,7 +59,16 @@ return [
                 'validation'    => 'required',
                 'channel_based' => false,
                 'locale_based'  => true,
+            ],
+            [
+                'name'          => 'secretKey',
+                'title'         => 'Secret Key', // use translation
+                'type'          => 'text',
+                'validation'    => 'required',
+                'channel_based' => false,
+                'locale_based'  => true,
             ]
+
         ]
     ]
 ];

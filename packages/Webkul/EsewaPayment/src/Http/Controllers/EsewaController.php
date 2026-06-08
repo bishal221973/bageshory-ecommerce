@@ -9,10 +9,10 @@ use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
 
 use Webkul\Checkout\Repositories\CartRepository;
+use Webkul\EsewaPayment\Payment\EsewaPayment;
 use Webkul\PayU\Payment\PayU;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderTransactionRepository;
-
 class EsewaController extends Controller
 {
     public const PAYMENT_SUCCESS = 'success';
@@ -25,9 +25,6 @@ class EsewaController extends Controller
     ) {}
     public function redirect()
     {
-        // return session()->get('esewa_cart_id');
-        // session()->put('esewa_amount', $cart->grand_total);
-        // return session()->get('cart_id');
         $cart = Cart::getCart();
         // 1. eSewa requires amounts to have exactly 2 decimal points (e.g., "100.00")
         $amount = number_format($cart->grand_total, 2, '.', '');
