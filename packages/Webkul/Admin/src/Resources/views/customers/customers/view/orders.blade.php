@@ -1,3 +1,6 @@
+@php
+$totalAmount=0;
+@endphp
 <div class="box-shadow rounded bg-white p-4 dark:bg-gray-900">
     <div class="flex justify-between">
         <!-- Total Order Count -->
@@ -12,12 +15,11 @@
     </div>
 
     <x-admin::datagrid
-    :src="route('admin.customers.customers.view', [
+        :src="route('admin.customers.customers.view', [
     'id'   => $customer->id,
     'type' => 'orders'
-    ])"
-    >
-    
+    ])">
+
         <!-- Datagrid Header -->
         <template #header="{
             isLoading,
@@ -36,8 +38,7 @@
                 <div class="row grid grid-cols-[0.5fr_0.5fr_1fr] grid-rows-1 items-center border-b border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
                     <div
                         class="flex select-none items-center gap-2.5"
-                        v-for="(columnGroup, index) in [['increment_id', 'created_at', 'status'], ['base_grand_total', 'method', 'channel_name'], ['full_name', 'customer_email', 'location', 'image']]"
-                    >
+                        v-for="(columnGroup, index) in [['increment_id', 'created_at', 'status'], ['base_grand_total', 'method', 'channel_name'], ['full_name', 'customer_email', 'location', 'image']]">
                         <p class="text-gray-600 dark:text-gray-300">
                             <span class="[&>*]:after:content-['_/_']">
                                 <template v-for="column in columnGroup">
@@ -49,8 +50,7 @@
                                         }"
                                         @click="
                                             available.columns.find(columnTemp => columnTemp.index === column)?.sortable ? sort(available.columns.find(columnTemp => columnTemp.index === column)): {}
-                                        "
-                                    >
+                                        ">
                                         @{{ available.columns.find(columnTemp => columnTemp.index === column)?.label }}
                                     </span>
                                 </template>
@@ -59,8 +59,7 @@
                             <i
                                 class="align-text-bottom text-base text-gray-800 dark:text-white ltr:ml-1.5 rtl:mr-1.5"
                                 :class="[applied.sort.order === 'asc' ? 'icon-down-stat': 'icon-up-stat']"
-                                v-if="columnGroup.includes(applied.sort.column)"
-                            ></i>
+                                v-if="columnGroup.includes(applied.sort.column)"></i>
                         </p>
                     </div>
                 </div>
@@ -80,18 +79,17 @@
             </template>
 
             <template v-else>
+
                 <div
                     v-if="available.meta.total"
                     class="row grid grid-cols-4 border-b px-4 py-2.5 transition-all hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-950"
-                    v-for="record in available.records"
-                >
+                    v-for="record in available.records">
                     <!-- Order Id, Created, Status Section -->
                     <div class="">
                         <div class="flex gap-2.5">
                             <div class="flex flex-col gap-1.5">
                                 <p
-                                    class="text-base font-semibold text-gray-800 dark:text-white"
-                                >
+                                    class="text-base font-semibold text-gray-800 dark:text-white">
                                     @{{ "@lang('admin::app.sales.orders.index.datagrid.id')".replace(':id', record.increment_id) }}
                                 </p>
 
@@ -116,7 +114,8 @@
                             </p>
 
                             <p class="text-gray-600 dark:text-gray-300">
-                                @{{ record.channel_name }}
+                                <!-- @{{ record.total_amount }} -->
+                            <p v-html="record.payment_status"></p>
                             </p>
                         </div>
                     </div>
@@ -143,6 +142,7 @@
                             <span class="icon-sort-right rtl:icon-sort-left cursor-pointer p-1.5 text-2xl hover:rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 ltr:ml-1 rtl:mr-1"></span>
                         </a>
                     </div>
+
                 </div>
 
                 <div v-else class="table-responsive grid w-full">
@@ -150,8 +150,7 @@
                         <!-- Placeholder Image -->
                         <img
                             src="{{ bagisto_asset('images/empty-placeholders/orders.svg') }}"
-                            class="h-20 w-20 dark:mix-blend-exclusion dark:invert"
-                        />
+                            class="h-20 w-20 dark:mix-blend-exclusion dark:invert" />
 
                         <div class="flex flex-col items-center">
                             <p class="text-base font-semibold text-gray-400">
@@ -160,7 +159,27 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div
+                    style="width: 100%;background-color:#f2f2f2"
+                    class="w-full bg-red-500 order-b flex justify-between px-4 py-2.5">
+                    <b class="text-gray-600">
+                        Total:
+                    </b>
+                    <b class="text-gray-600">
+                        @{{ available.records[0].total_amount }}
+                    </b>
+                    
+                </div>
             </template>
         </template>
+
+
     </x-admin::datagrid>
+
+    <div>
+        <!-- @{{ record.full_name }} -->
+    </div>
+
 </div>

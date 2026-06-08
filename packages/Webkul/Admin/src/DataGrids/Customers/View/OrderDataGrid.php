@@ -44,7 +44,8 @@ class OrderDataGrid extends DataGrid
                         END as payment_status
                     "),
                 DB::raw('CONCAT(' . $tablePrefix . 'order_address_billing.first_name, " ", ' . $tablePrefix . 'order_address_billing.last_name) as full_name'),
-                DB::raw('CONCAT(' . $tablePrefix . 'order_address_billing.address, ", ", ' . $tablePrefix . 'order_address_billing.city,", ", ' . $tablePrefix . 'order_address_billing.state, ", ", ' . $tablePrefix . 'order_address_billing.country) as location')
+                DB::raw('CONCAT(' . $tablePrefix . 'order_address_billing.address, ", ", ' . $tablePrefix . 'order_address_billing.city,", ", ' . $tablePrefix . 'order_address_billing.state, ", ", ' . $tablePrefix . 'order_address_billing.country) as location'),
+                DB::raw('SUM(orders.base_grand_total) OVER() as total_amount')
             )
             ->where('orders.customer_id', request()->route('id'));
 
@@ -73,14 +74,14 @@ class OrderDataGrid extends DataGrid
      */
     public function prepareColumns()
     {
-        $this->addColumn([
-            'index' => 'increment_id',
-            'label' => trans('admin::app.customers.customers.view.datagrid.orders.order-id'),
-            'type' => 'string',
-            'searchable' => true,
-            'filterable' => true,
-            'sortable' => true,
-        ]);
+        // $this->addColumn([
+        //     'index' => 'increment_id',
+        //     'label' => trans('admin::app.customers.customers.view.datagrid.orders.order-id'),
+        //     'type' => 'string',
+        //     'searchable' => true,
+        //     'filterable' => true,
+        //     'sortable' => true,
+        // ]);
 
         $this->addColumn([
             'index' => 'status',
@@ -150,6 +151,7 @@ class OrderDataGrid extends DataGrid
             'index'             => 'payment_status',
             'label'             => 'Payment Status',
             'type'              => 'string',
+            'searchale'        => true,
             'filterable'        => true,
             'filterable_type'   => 'dropdown',
             'filterable_options' => [
@@ -166,12 +168,12 @@ class OrderDataGrid extends DataGrid
                     'value' => 'Unpaid',
                 ],
             ],
-            'sortable' => false,
+            'sortable' => true,
             'closure' => function ($row) {
                 return match ($row->payment_status) {
-                    'Paid' => '<span class="label-active">Paid</span>',
-                    'Partially Paid' => '<span class="label-processing">Partially Paid</span>',
-                    default => '<span class="label-pending">Unpaid</span>',
+                    'Paid' => '<b style="color:green">Paid</b>',
+                    'Partially Paid' => '<b style="color:orange">Partially Paid</b>',
+                    default => '<b style="color:red">Unpaid</b>',
                 };
             },
         ]);
