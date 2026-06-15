@@ -12,8 +12,6 @@
             v-if="lengthOfMedia"
         >
         </span>
-
-        <!-- Swiper Container -->
         <div
             ref="swiperContainer"
             class="flex flex-col max-h-[540px] gap-2.5 [&>*]:flex-[0] overflow-auto scroll-smooth scrollbar-hide"
