@@ -158,19 +158,32 @@ class ProductController extends Controller
     {
         // return $request;
         Event::dispatch('catalog.product.update.before', $id);
-        $data = [];
+        $finalPdfs = $request->input('existing_pdfs', []);
+        $product = DB::table('products')->where('id', $id)->first();
 
+        if ($product && !empty($product->pdf)) {
+            // $oldPaths = json_merge(json_decode($product->pdf, true) ?? []);
+            $oldPaths = is_array(json_decode($product->pdf, true)) ? json_decode($product->pdf, true) : [];
+
+            // Find files that are no longer present in the updated state array
+            $deletedPaths = array_diff($oldPaths, $finalPdfs);
+            foreach ($deletedPaths as $deletedPath) {
+                Storage::disk('public')->delete($deletedPath); // Delete actual file from storage disk
+            }
+        }
         if ($request->hasFile('pdfs')) {
             foreach ($request->file('pdfs') as $pdf) {
-                $data['pdfs'][] = $pdf->store('pdf', 'public');
+                $finalPdfs[] = $pdf->store('pdf', 'public');
             }
-
-            DB::table('products')
-                ->where('id', $id)
-                ->update([
-                    'pdf' => json_encode($data['pdfs']),
-                ]);
         }
+
+        // 4. Update the DB table with the synchronized combined list
+        // If both collections are empty, it cleanly stores an empty JSON array []
+        DB::table('products')
+            ->where('id', $id)
+            ->update([
+                'pdf' => json_encode(array_values($finalPdfs)),
+            ]);
         $product = $this->productRepository->update($request->all(), $id);
         Event::dispatch('catalog.product.update.after', $product);
 

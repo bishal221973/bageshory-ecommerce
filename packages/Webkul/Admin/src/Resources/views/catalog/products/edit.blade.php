@@ -237,6 +237,7 @@
                     <!-- Videos View Blade File -->
                     @include('admin::catalog.products.edit.videos')
                     @include('admin::catalog.products.edit.pdf')
+                    
 
                     <!-- Product Type View Blade File -->
                     @includeIf('admin::catalog.products.edit.types.' . $product->type)
