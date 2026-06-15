@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -25,6 +26,8 @@ use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
 use Webkul\Product\Repositories\ProductInventoryRepository;
 use Webkul\Product\Repositories\ProductRepository;
+
+use Webkul\Product\Contracts\Product as ProductModal;
 
 class ProductController extends Controller
 {
@@ -89,12 +92,14 @@ class ProductController extends Controller
      */
     public function store()
     {
+
         $this->validate(request(), [
             'type' => 'required',
             'attribute_family_id' => 'required',
             'sku' => ['required', 'unique:products,sku', new Slug],
             'super_attributes' => 'array|min:1',
             'super_attributes.*' => 'array|min:1',
+
         ]);
 
         if (
@@ -151,10 +156,22 @@ class ProductController extends Controller
      */
     public function update(ProductForm $request, int $id)
     {
+        // return $request;
         Event::dispatch('catalog.product.update.before', $id);
+        $data = [];
 
+        if ($request->hasFile('pdfs')) {
+            foreach ($request->file('pdfs') as $pdf) {
+                $data['pdfs'][] = $pdf->store('pdf', 'public');
+            }
+
+            DB::table('products')
+                ->where('id', $id)
+                ->update([
+                    'pdf' => json_encode($data['pdfs']),
+                ]);
+        }
         $product = $this->productRepository->update($request->all(), $id);
-
         Event::dispatch('catalog.product.update.after', $product);
 
         session()->flash('success', trans('admin::app.catalog.products.update-success'));

@@ -70,6 +70,7 @@ class ProductRepository extends Repository
     public function update(array $data, $id, $attributes = [])
     {
         $product = $this->findOrFail($id);
+        
 
         $product = $product->getTypeInstance()->update($data, $id, $attributes);
 

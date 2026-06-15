@@ -81,6 +81,7 @@ class ProductForm extends FormRequest
             'sku' => ['required', 'unique:products,sku,'.$this->id, new Slug],
             'url_key' => ['required', new ProductCategoryUniqueSlug('products', $this->id)],
             'images.files.*' => ['nullable', 'mimes:bmp,jpeg,jpg,png,webp'],
+            'images.pdfs.*' => ['nullable'],
             'images.positions.*' => ['nullable', 'integer'],
             'videos.files.*' => ['nullable', 'mimetypes:application/octet-stream,video/mp4,video/webm,video/quicktime', 'max:'.$this->maxVideoFileSize],
             'videos.positions.*' => ['nullable', 'integer'],
