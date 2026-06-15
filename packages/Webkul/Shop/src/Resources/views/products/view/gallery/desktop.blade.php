@@ -18,7 +18,7 @@
             ref="swiperContainer"
             class="flex flex-col max-h-[540px] gap-2.5 [&>*]:flex-[0] overflow-auto scroll-smooth scrollbar-hide"
         >
-            <template v-for="(media, index) in [...media.images, ...media.videos]">
+            <template v-for="(media, index) in [...media.images, ...media.videos,...media.videos]">
                 <video
                     v-if="media.type == 'videos'"
                     :class="`transparent max-h-[100px] min-w-[100px] cursor-pointer rounded-xl border ${isActiveMedia(index) ? 'pointer-events-none border-navyBlue' : 'border-white'}`"
@@ -42,6 +42,23 @@
                     tabindex="0"
                     @click="change(media, index)"
                 />
+                
+            </template>
+            <template v-for="(media, index) in [...media.pdfs]">
+                
+                <a
+                    :href="`/storage/${media}`"
+                    target="_blank"
+                    class="flex flex-col items-center justify-center max-h-[100px] min-w-[100px]">
+                    <span class="text-3xl text-red-600"></span>
+
+                    <p class="text-xs text-center mt-1 break-all">
+                        <img src="/pdf.png" alt="" style="height: 70px;">
+                    </p>
+                </a>
+               
+
+
             </template>
         </div>
 
