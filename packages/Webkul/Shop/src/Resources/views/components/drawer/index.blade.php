@@ -1,60 +1,64 @@
 @props([
-    'isActive' => false,
-    'position' => 'right',
-    'width'    => '500px',
+'isActive' => false,
+'position' => 'right',
+'width' => '500px',
 ])
 
 <v-drawer
     {{ $attributes }}
     is-active="{{ $isActive }}"
     position="{{ $position }}"
-    width="{{ $width }}"
->
+    width="{{ $width }}">
     @isset($toggle)
-        <template v-slot:toggle>
-            {{ $toggle }}
-        </template>
+    <template v-slot:toggle>
+        {{ $toggle }}
+    </template>
     @endisset
 
     @isset($header)
-        <template v-slot:header="{ close }">
-            <div {{ $header->attributes->merge(['class' => 'grid gap-y-2.5 p-6 pb-5 max-md:gap-y-1.5 max-md:border-b max-md:border-zinc-200 max-md:p-4 max-md:gap-y-1 max-md:font-semibold']) }}>
-                {{ $header }}
+    <template v-slot:header="{ close }">
+        <div {{ $header->attributes->merge(['class' => 'grid gap-y-2.5 p-6 pb-5 max-md:gap-y-1.5 max-md:border-b max-md:border-zinc-200 max-md:p-4 max-md:gap-y-1 max-md:font-semibold']) }}>
+            {{ $header }}
 
-                <div class="absolute top-5 max-sm:top-4 ltr:right-5 rtl:left-5">
-                    <span
-                        class="icon-cancel cursor-pointer text-3xl max-md:text-2xl"
-                        @click="close"
-                    >
-                    </span>
-                </div>
+            <div class="absolute top-5 max-sm:top-4 ltr:right-5 rtl:left-5">
+                <span
+                    class="icon-cancel cursor-pointer text-3xl max-md:text-2xl"
+                    @click="close">
+                </span>
             </div>
-        </template>
+        </div>
+    </template>
     @endisset
 
     @isset($content)
-        <template v-slot:content>
-            <div {{ $content->attributes->merge(['class' => 'flex-1 overflow-auto px-6 max-md:px-4']) }}>
-                {{ $content }}
-            </div>
-        </template>
+    <template v-slot:content>
+        <div {{ $content->attributes->merge(['class' => 'flex-1 overflow-auto px-6 max-md:px-4']) }}>
+            {{ $content }}
+        </div>
+        <div class="p-3">
+            <a
+                 href="{{ url()->previous() }}"
+                class="mx-auto block w-full cursor-pointer rounded-2xl bg-navyBlue px-11 py-4 text-center text-base font-medium text-white max-md:rounded-lg max-md:px-5 max-md:py-2">
+                Continue Shopping
+            </a>
+        </div>
+    </template>
     @endisset
 
     @isset($footer)
-        <template v-slot:footer>
-            <div {{ $footer->attributes->merge(['class' => 'pb-8 max-md:pb-2']) }}>
-                {{ $footer }}
-            </div>
-        </template>
+    <template v-slot:footer>
+        <div {{ $footer->attributes->merge(['class' => 'pb-8 max-md:pb-2']) }}>
+            {{ $footer }}
+        </div>
+    </template>
     @endisset
 </v-drawer>
 
 @pushOnce('scripts')
-    <script
-        type="text/x-template"
-        id="v-drawer-template"
-    >
-        <div>
+<script
+    type="text/x-template"
+    id="v-drawer-template">
+    <div>
             <!-- Toggler -->
             <div @click="open">
                 <slot name="toggle"></slot>
@@ -124,79 +128,85 @@
         </div>
     </script>
 
-    <script type="module">
-        app.component('v-drawer', {
-            template: '#v-drawer-template',
+<script type="module">
+    app.component('v-drawer', {
+        template: '#v-drawer-template',
 
-            props: [
-                'isActive',
-                'position',
-                'width'
-            ],
+        props: [
+            'isActive',
+            'position',
+            'width'
+        ],
 
-            data() {
-                return {
-                    isOpen: this.isActive,
-                };
-            },
+        data() {
+            return {
+                isOpen: this.isActive,
+            };
+        },
 
-            watch: {
-                isActive: function(newVal, oldVal) {
-                    this.isOpen = newVal;
+        watch: {
+            isActive: function(newVal, oldVal) {
+                this.isOpen = newVal;
+            }
+        },
+
+        computed: {
+            enterFromLeaveToClasses() {
+                if (this.position == 'top') {
+                    return '-translate-y-full';
+                } else if (this.position == 'bottom') {
+                    return 'translate-y-full';
+                } else if (this.position == 'left') {
+                    return 'ltr:-translate-x-full rtl:translate-x-full';
+                } else if (this.position == 'right') {
+                    return 'ltr:translate-x-full rtl:-translate-x-full';
                 }
-            },
+            }
+        },
 
-            computed: {
-                enterFromLeaveToClasses() {
-                    if (this.position == 'top') {
-                        return '-translate-y-full';
-                    } else if (this.position == 'bottom') {
-                        return 'translate-y-full';
-                    } else if (this.position == 'left') {
-                        return 'ltr:-translate-x-full rtl:translate-x-full';
-                    } else if (this.position == 'right') {
-                        return 'ltr:translate-x-full rtl:-translate-x-full';
-                    }
-                }
-            },
+        methods: {
+            toggle() {
+                this.isOpen = !this.isOpen;
 
-            methods: {
-                toggle() {
-                    this.isOpen = ! this.isOpen;
-
-                    if (this.isOpen) {
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.body.style.overflow ='auto';
-                    }
-
-                    document.body.style.paddingRight = '';
-
-                    this.$emit('toggle', { isActive: this.isOpen });
-                },
-
-                open() {
-                    this.isOpen = true;
-
-                    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-
+                if (this.isOpen) {
                     document.body.style.overflow = 'hidden';
-
-                    document.body.style.paddingRight = `${scrollbarWidth}px`;
-
-                    this.$emit('open', { isActive: this.isOpen });
-                },
-
-                close() {
-                    this.isOpen = false;
-
+                } else {
                     document.body.style.overflow = 'auto';
-
-                    document.body.style.paddingRight = '';
-
-                    this.$emit('close', { isActive: this.isOpen });
                 }
+
+                document.body.style.paddingRight = '';
+
+                this.$emit('toggle', {
+                    isActive: this.isOpen
+                });
             },
-        });
-    </script>
+
+            open() {
+                this.isOpen = true;
+
+                const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+                document.body.style.overflow = 'hidden';
+
+                document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+                this.$emit('open', {
+                    isActive: this.isOpen
+                });
+            },
+
+            close() {
+                this.isOpen = false;
+
+                document.body.style.overflow = 'auto';
+
+                document.body.style.paddingRight = '';
+
+                this.$emit('close', {
+                    isActive: this.isOpen
+                });
+            }
+        },
+    });
+</script>
 @endPushOnce

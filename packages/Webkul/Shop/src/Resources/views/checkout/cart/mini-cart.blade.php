@@ -79,6 +79,7 @@
                             class="flex gap-x-5 max-md:gap-x-4"
                             v-for="item in cart?.items"
                         >
+                        Hello
                             <!-- Cart Item Image -->
                             {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.content.image.before') !!}
 
@@ -329,7 +330,7 @@
                         <!-- Cart Action Container -->
                         <div class="grid gap-2.5 px-6 max-md:px-4 max-sm:gap-1.5">
                             {!! view_render_event('bagisto.shop.checkout.mini-cart.continue_to_checkout.before') !!}
-
+                         
                         <a
                             href="{{ route('shop.checkout.onepage.index') }}"
                             class="mx-auto block w-full cursor-pointer rounded-2xl bg-navyBlue px-11 py-4 text-center text-base font-medium text-white max-md:rounded-lg max-md:px-5 max-md:py-2"
