@@ -79,7 +79,6 @@
                             class="flex gap-x-5 max-md:gap-x-4"
                             v-for="item in cart?.items"
                         >
-                        Hello
                             <!-- Cart Item Image -->
                             {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.content.image.before') !!}
 
