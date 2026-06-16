@@ -15,7 +15,7 @@ $pdfs = is_string($product->pdf)
             <div class="flex justify-center w-full">
                 <img src="/pdf.png" alt="" style="height: 70px;" class="block mx-auto">
             </div>
-            <small class="block text-gray-500">{{$pdf}}</small>
+            <small class="block text-gray-500">{{ str_replace('pdf/', '', $pdf) }}</small>
         </div>
     </a>
     @endforeach
