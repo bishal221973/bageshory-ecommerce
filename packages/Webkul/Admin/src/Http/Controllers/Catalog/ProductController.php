@@ -171,9 +171,23 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($deletedPath); // Delete actual file from storage disk
             }
         }
+        // if ($request->hasFile('pdfs')) {
+        //     foreach ($request->file('pdfs') as $pdf) {
+        //         $finalPdfs[] = $pdf->store('pdf', 'public');
+        //     }
+        // }
         if ($request->hasFile('pdfs')) {
             foreach ($request->file('pdfs') as $pdf) {
-                $finalPdfs[] = $pdf->store('pdf', 'public');
+
+                $originalName = $pdf->getClientOriginalName();
+
+                $path = $pdf->storeAs(
+                    'pdf',
+                    $originalName,
+                    'public'
+                );
+
+                $finalPdfs[] = $path;
             }
         }
 

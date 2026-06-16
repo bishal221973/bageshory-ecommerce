@@ -153,6 +153,15 @@
                 >
                     @include('shop::products.view.reviews')
                 </x-shop::tabs.item>
+                 <x-shop::tabs.item
+                    id="review-tab"
+                    class="container mt-[60px] !p-0"
+                    :title="'Technical Specifications'"
+                    :is-selected="false"
+                >
+                    <!-- <span>Hello this is spec</span> -->
+                    @include('shop::products.view.TechnicalSpec')
+                </x-shop::tabs.item>
             </x-shop::tabs>
         </div>
     </div>
