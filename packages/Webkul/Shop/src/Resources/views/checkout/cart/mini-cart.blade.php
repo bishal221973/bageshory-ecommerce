@@ -3,16 +3,14 @@
     <span
         class="icon-cart cursor-pointer text-2xl"
         role="button"
-        aria-label="@lang('shop::app.checkout.cart.mini-cart.shopping-cart')"
-    ></span>
+        aria-label="@lang('shop::app.checkout.cart.mini-cart.shopping-cart')"></span>
 </v-mini-cart>
 
 @pushOnce('scripts')
-    <script
-        type="text/x-template"
-        id="v-mini-cart-template"
-    >
-        {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.before') !!}
+<script
+    type="text/x-template"
+    id="v-mini-cart-template">
+    {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.before') !!}
 
         @if (core()->getConfigData('sales.checkout.mini_cart.display_mini_cart'))
             <x-shop::drawer>
@@ -327,6 +325,13 @@
                         {!! view_render_event('bagisto.shop.checkout.mini-cart.action.before') !!}
 
                         <!-- Cart Action Container -->
+                         <div class="p-3">
+            <a
+                 href="{{ url()->previous() }}"
+                class="mx-auto block w-full cursor-pointer rounded-2xl bg-navyBlue px-11 py-4 text-center text-base font-medium text-white max-md:rounded-lg max-md:px-5 max-md:py-2">
+                Continue Shopping
+            </a>
+        </div>
                         <div class="grid gap-2.5 px-6 max-md:px-4 max-sm:gap-1.5">
                             {!! view_render_event('bagisto.shop.checkout.mini-cart.continue_to_checkout.before') !!}
                          
@@ -378,121 +383,132 @@
         {!! view_render_event('bagisto.shop.checkout.mini-cart.drawer.after') !!}
     </script>
 
-    <script type="module">
-        app.component("v-mini-cart", {
-            template: '#v-mini-cart-template',
+<script type="module">
+    app.component("v-mini-cart", {
+        template: '#v-mini-cart-template',
 
-            data() {
-                return  {
-                    refreshKey: 0,
+        data() {
+            return {
+                refreshKey: 0,
 
-                    cart: null,
+                cart: null,
 
-                    isLoading:false,
+                isLoading: false,
 
-                    displayTax: {
-                        prices: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_prices') }}",
-                        subtotal: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_subtotal') }}",
-                    },
-                };
-            },
-
-            mounted() {
-                if (!this.cart) {
-                    this.getCart();
-                }
-
-                /**
-                 * Action.
-                 */
-                this.$emitter.on('update-mini-cart', (cart) => {
-                    this.cart = cart;
-                });
-            },
-
-            methods: {
-                getCart() {
-                    this.$axios.get('{{ route('shop.api.checkout.cart.index') }}')
-                        .then(response => {
-                            this.cart = response.data.data;
-                        })
-                        .catch(error => {});
+                displayTax: {
+                    prices: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_prices') }}",
+                    subtotal: "{{ core()->getConfigData('sales.taxes.shopping_cart.display_subtotal') }}",
                 },
+            };
+        },
 
-                updateItem(quantity, item) {
-                    this.isLoading = true;
+        mounted() {
+            if (!this.cart) {
+                this.getCart();
+            }
 
-                    let qty = {};
+            /**
+             * Action.
+             */
+            this.$emitter.on('update-mini-cart', (cart) => {
+                this.cart = cart;
+            });
+        },
 
-                    qty[item.id] = quantity;
+        methods: {
+            getCart() {
+                this.$axios.get('{{ route('
+                        shop.api.checkout.cart.index ') }}')
+                    .then(response => {
+                        this.cart = response.data.data;
+                    })
+                    .catch(error => {});
+            },
 
-                    this.$axios.put('{{ route('shop.api.checkout.cart.update') }}', { qty })
-                        .then(response => {
-                            this.isLoading = false;
+            updateItem(quantity, item) {
+                this.isLoading = true;
 
-                            /**
-                             * The update endpoint returns `{ data: CartResource, message }`
-                             * on success and only `{ message }` on failure (e.g.
-                             * inventory-warning). Only treat the payload as a cart when
-                             * it has an `items` field — otherwise surface the server
-                             * message as a warning flash.
-                             */
-                            const payload = response.data.data;
+                let qty = {};
 
-                            if (payload && payload.items !== undefined) {
-                                this.cart = payload;
-                            } else {
-                                this.$emitter.emit('add-flash', {
-                                    type: 'warning',
-                                    message: payload?.message || response.data.message,
-                                });
-                            }
+                qty[item.id] = quantity;
 
-                            /**
-                             * Bump the key so the quantity-changer remounts from the
-                             * current server value even when the update was rejected
-                             * (in which case `value` didn't change and the component's
-                             * `value` watcher wouldn't fire).
-                             */
-                            this.refreshKey++;
+                this.$axios.put('{{ route('
+                        shop.api.checkout.cart.update ') }}', {
+                            qty
                         })
-                        .catch(error => {
-                            this.isLoading = false;
+                    .then(response => {
+                        this.isLoading = false;
 
+                        /**
+                         * The update endpoint returns `{ data: CartResource, message }`
+                         * on success and only `{ message }` on failure (e.g.
+                         * inventory-warning). Only treat the payload as a cart when
+                         * it has an `items` field — otherwise surface the server
+                         * message as a warning flash.
+                         */
+                        const payload = response.data.data;
+
+                        if (payload && payload.items !== undefined) {
+                            this.cart = payload;
+                        } else {
                             this.$emitter.emit('add-flash', {
-                                type: 'error',
-                                message: error.response?.data?.message || error.message,
+                                type: 'warning',
+                                message: payload?.message || response.data.message,
                             });
+                        }
 
-                            this.refreshKey++;
+                        /**
+                         * Bump the key so the quantity-changer remounts from the
+                         * current server value even when the update was rejected
+                         * (in which case `value` didn't change and the component's
+                         * `value` watcher wouldn't fire).
+                         */
+                        this.refreshKey++;
+                    })
+                    .catch(error => {
+                        this.isLoading = false;
+
+                        this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: error.response?.data?.message || error.message,
                         });
-                },
 
-                removeItem(itemId) {
-                    this.$emitter.emit('open-confirm-modal', {
-                        agree: () => {
-                            this.isLoading = true;
+                        this.refreshKey++;
+                    });
+            },
 
-                            this.$axios.post('{{ route('shop.api.checkout.cart.destroy') }}', {
-                                '_method': 'DELETE',
-                                'cart_item_id': itemId,
-                            })
+            removeItem(itemId) {
+                this.$emitter.emit('open-confirm-modal', {
+                    agree: () => {
+                        this.isLoading = true;
+
+                        this.$axios.post('{{ route('
+                                shop.api.checkout.cart.destroy ') }}', {
+                                    '_method': 'DELETE',
+                                    'cart_item_id': itemId,
+                                })
                             .then(response => {
                                 this.cart = response.data.data;
 
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.message
+                                });
 
                                 this.isLoading = false;
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: response.data.message
+                                });
 
                                 this.isLoading = false;
                             });
-                        }
-                    });
-                },
+                    }
+                });
             },
-        });
-    </script>
+        },
+    });
+</script>
 @endpushOnce

@@ -35,13 +35,7 @@
         <div {{ $content->attributes->merge(['class' => 'flex-1 overflow-auto px-6 max-md:px-4']) }}>
             {{ $content }}
         </div>
-        <div class="p-3">
-            <a
-                 href="{{ url()->previous() }}"
-                class="mx-auto block w-full cursor-pointer rounded-2xl bg-navyBlue px-11 py-4 text-center text-base font-medium text-white max-md:rounded-lg max-md:px-5 max-md:py-2">
-                Continue Shopping
-            </a>
-        </div>
+        
     </template>
     @endisset
 
