@@ -19,6 +19,8 @@
         "ext-tokenizer": "*",
         "astrotomic/laravel-translatable": "^11.16",
         "bagisto/bagisto-package-generator": "^2.1",
+        "bagisto/graphql-api": "dev-main",
+        "bagisto/rest-api": "^2.3",
         "barryvdh/laravel-dompdf": "^2.0.0|^3.0",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "elasticsearch/elasticsearch": "^8.10",

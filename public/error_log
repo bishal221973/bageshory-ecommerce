@@ -13,3 +13,4 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in /home/gkitsolu/mccnp.com/public/index.php on line 34
+[09-Jun-2026 15:14:04 Asia/Kolkata] PHP Fatal error:  Access level to ApiPlatform\GraphQl\Serializer\ItemNormalizer::$safeCacheKeysCache must be protected (as in class ApiPlatform\Serializer\AbstractItemNormalizer) or weaker in /home/gkitsolu/mccnp.com/vendor/api-platform/graphql/Serializer/ItemNormalizer.php on line 41
