@@ -9,36 +9,38 @@
     name="{{ $name }}"
     value="{{ $value }}"
     min-value="{{ $minValue }}"
->
-</v-quantity-changer>
+></v-quantity-changer>
 
 @pushOnce('scripts')
     <script
         type="text/x-template"
         id="v-quantity-changer-template"
     >
-        <div>
-            <span 
+        <div class="flex items-center gap-2">
+            <span
                 class="icon-minus cursor-pointer text-2xl"
                 role="button"
                 tabindex="0"
                 aria-label="@lang('shop::app.components.quantity-changer.decrease-quantity')"
                 @click="decrease"
-            >
-            </span>
+            ></span>
 
-            <p class="w-2.5 select-none text-center max-sm:text-sm">
-                @{{ quantity }}
-            </p>
-            
-            <span 
+            <input
+                type="number"
+                :min="minValue"
+                v-model.number="quantity"
+                @blur="validateQuantity"
+                @keyup.enter="validateQuantity"
+                class="w-12 border-0 bg-transparent text-center outline-none max-sm:text-sm"
+            />
+
+            <span
                 class="icon-plus cursor-pointer text-2xl"
                 role="button"
                 tabindex="0"
                 aria-label="@lang('shop::app.components.quantity-changer.increase-quantity')"
                 @click="increase"
-            >
-            </span>
+            ></span>
 
             <v-field
                 type="hidden"
@@ -50,35 +52,64 @@
 
     <script type="module">
         app.component("v-quantity-changer", {
-            template: '#v-quantity-changer-template',
+            template: "#v-quantity-changer-template",
 
-            props:['name', 'value', 'minValue'],
+            props: {
+                name: {
+                    type: String,
+                    default: "",
+                },
+
+                value: {
+                    type: Number,
+                    default: 1,
+                },
+
+                minValue: {
+                    type: Number,
+                    default: 1,
+                },
+            },
 
             data() {
-                return  {
-                    quantity: this.value,
-                }
+                return {
+                    quantity: Number(this.value),
+                };
             },
 
             watch: {
-                value() {
-                    this.quantity = this.value;
+                value(newValue) {
+                    this.quantity = Number(newValue);
                 },
             },
 
             methods: {
                 increase() {
-                    this.$emit('change', ++this.quantity);
+                    this.quantity++;
+
+                    this.$emit("change", this.quantity);
                 },
 
                 decrease() {
                     if (this.quantity > this.minValue) {
-                        this.quantity -= 1;
+                        this.quantity--;
 
-                        this.$emit('change', this.quantity);
+                        this.$emit("change", this.quantity);
                     }
                 },
-            }
+
+                validateQuantity() {
+                    let qty = parseInt(this.quantity);
+
+                    if (isNaN(qty) || qty < this.minValue) {
+                        qty = this.minValue;
+                    }
+
+                    this.quantity = qty;
+
+                    this.$emit("change", this.quantity);
+                },
+            },
         });
     </script>
-@endpushOnce
+@endPushOnce

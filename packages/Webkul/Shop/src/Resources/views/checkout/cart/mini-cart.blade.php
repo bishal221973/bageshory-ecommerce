@@ -467,10 +467,10 @@
                         .catch(error => {
                             this.isLoading = false;
 
-                            this.$emitter.emit('add-flash', {
-                                type: 'error',
-                                message: error.response?.data?.message || error.message,
-                            });
+                            // this.$emitter.emit('add-flash', {
+                            //     type: 'error',
+                            //     message: error.response?.data?.message || error.message,
+                            // });
 
                             this.refreshKey++;
                         });
