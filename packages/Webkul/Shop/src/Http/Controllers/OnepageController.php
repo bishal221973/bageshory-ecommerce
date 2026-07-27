@@ -68,8 +68,16 @@ class OnepageController extends Controller
         ) {
             return redirect()->route('shop.customer.session.index');
         }
-
-        return view('shop::checkout.onepage.index', compact('cart'));
+        
+        try {
+    $allowCreditPayment = auth()->guard('customer')
+        ->user()
+        ->group
+        ->allow_credit_payment;
+} catch (\Throwable $e) {
+    dd($e->getMessage());
+}
+        return view('shop::checkout.onepage.index', compact('cart','allowCreditPayment'));
     }
 
     /**

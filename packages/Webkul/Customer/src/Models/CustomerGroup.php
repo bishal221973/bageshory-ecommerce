@@ -29,6 +29,7 @@ class CustomerGroup extends Model implements CustomerGroupContract
         'name',
         'code',
         'is_user_defined',
+        'allow_credit_payment',
     ];
 
     /**

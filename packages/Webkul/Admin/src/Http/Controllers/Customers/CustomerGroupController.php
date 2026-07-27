@@ -41,6 +41,7 @@ class CustomerGroupController extends Controller
         $this->validate(request(), [
             'code' => ['required', 'unique:customer_groups,code', new Code],
             'name' => 'required',
+            'allow_credit_payment' => ['boolean'],
         ]);
 
         Event::dispatch('customer.customer_group.create.before');
@@ -51,6 +52,8 @@ class CustomerGroupController extends Controller
         ]), [
             'is_user_defined' => 1,
         ]);
+
+        $data['allow_credit_payment'] = request()->boolean('allow_credit_payment');
 
         $customerGroup = $this->customerGroupRepository->create($data);
 
@@ -67,18 +70,20 @@ class CustomerGroupController extends Controller
     public function update(): JsonResponse
     {
         $id = request()->input('id');
-
+        // return request();
         $this->validate(request(), [
             'code' => ['required', 'unique:customer_groups,code,'.$id, new Code],
             'name' => 'required',
+            'allow_credit_payment' => ['boolean'],
         ]);
 
         Event::dispatch('customer.customer_group.update.before', $id);
 
-        $customerGroup = $this->customerGroupRepository->update(request()->only([
-            'code',
-            'name',
-        ]), $id);
+       $customerGroup = $this->customerGroupRepository->update([
+    'code'                   => request('code'),
+    'name'                   => request('name'),
+    'allow_credit_payment'   => request()->boolean('allow_credit_payment'),
+], $id);
 
         Event::dispatch('customer.customer_group.update.after', $customerGroup);
 

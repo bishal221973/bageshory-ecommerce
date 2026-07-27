@@ -19,7 +19,8 @@ class GroupDataGrid extends DataGrid
             ->select(
                 'id',
                 'code',
-                'name'
+                'name',
+                'allow_credit_payment',
             );
     }
 
@@ -53,6 +54,13 @@ class GroupDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable' => true,
+        ]);
+        $this->addColumn([
+            'index'        => 'allow_credit_payment',
+            'label'        => 'Credit Payment',
+            'type'         => 'boolean',
+            'filterable'   => true,
+            'sortable'     => true,
         ]);
     }
 

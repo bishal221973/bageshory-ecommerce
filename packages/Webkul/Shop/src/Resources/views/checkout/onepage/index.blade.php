@@ -161,6 +161,7 @@
                         selectedPaymentMethod: null,
 
                         canPlaceOrder: false,
+                                                allowCreditPayment:@json($allowCreditPayment),
                     }
                 },
 

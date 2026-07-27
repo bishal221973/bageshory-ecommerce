@@ -1,19 +1,18 @@
 <x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.customers.groups.index.title')
-    </x-slot>
+        </x-slot>
 
-    {!! view_render_event('bagisto.admin.customers.groups.create.before') !!}
+        {!! view_render_event('bagisto.admin.customers.groups.create.before') !!}
 
-    <v-create-group />
+        <v-create-group />
 
-    {!! view_render_event('bagisto.admin.customers.groups.create.after') !!}
+        {!! view_render_event('bagisto.admin.customers.groups.create.after') !!}
 
-    @pushOnce('scripts')
+        @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-create-group-template"
-        >
+            id="v-create-group-template">
             <div>
                 <div class="flex items-center justify-between">
                     <p class="text-xl font-bold text-gray-800 dark:text-white">
@@ -65,6 +64,9 @@
 
                                 <!-- Name -->
                                 <p>@{{ record.name }}</p>
+                                <p>
+    @{{ record.allow_credit_payment ? 'Yes' : 'No' }}
+</p>
 
                                 <!-- Actions -->
                                 <div class="flex justify-end">
@@ -164,6 +166,28 @@
 
                                     <x-admin::form.control-group.error control-name="name" />
                                 </x-admin::form.control-group>
+
+                                <x-admin::form.control-group>
+    <x-admin::form.control-group.label>
+        Allow Credit Payment
+    </x-admin::form.control-group.label>
+
+    <input
+        type="hidden"
+        name="allow_credit_payment"
+        value="0"
+    >
+
+    <label class="flex items-center gap-2">
+        <input
+            type="checkbox"
+            name="allow_credit_payment"
+            value="1"
+        >
+
+        <span>Allow Credit Payment</span>
+    </label>
+</x-admin::form.control-group>
                             </x-slot>
 
                             <!-- Modal Footer -->
@@ -212,7 +236,10 @@
                 },
 
                 methods: {
-                    updateOrCreate(params, { resetForm, setErrors  }) {
+                    updateOrCreate(params, {
+                        resetForm,
+                        setErrors
+                    }) {
                         this.isLoading = true;
 
                         let formData = new FormData(this.$refs.groupCreateForm);
@@ -229,7 +256,10 @@
 
                                 this.$refs.datagrid.get();
 
-                                this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.message
+                                });
 
                                 resetForm();
                             })
@@ -250,6 +280,6 @@
                 }
             })
         </script>
-    @endPushOnce
+        @endPushOnce
 
 </x-admin::layouts>

@@ -5,18 +5,18 @@
     @payment-method-selected="setSelectedPaymentMethod"
     @processing="stepForward"
     @processed="stepProcessed"
->
+    :cart="cart"
+    :allow-credit-payment="allowCreditPayment">
     <x-shop::shimmer.checkout.onepage.payment-method />
 </v-payment-methods>
 
 {!! view_render_event('bagisto.shop.checkout.onepage.payment_methods.after') !!}
 
 @pushOnce('scripts')
-    <script
-        type="text/x-template"
-        id="v-payment-methods-template"
-    >
-        <div class="mb-7 max-md:last:!mb-0">
+<script
+    type="text/x-template"
+    id="v-payment-methods-template">
+    <div class="mb-7 max-md:last:!mb-0">
             <template v-if="! methods">
                 <!-- Payment Method shimmer Effect -->
                 <x-shop::shimmer.checkout.onepage.payment-method />
@@ -40,10 +40,17 @@
                     <!-- Accordion Blade Component Content -->
                     <x-slot:content class="mt-8 !p-0 max-md:mt-0 max-md:rounded-t-none max-md:border max-md:border-t-0 max-md:!p-4">
                         <div class="flex flex-wrap gap-7 max-md:gap-4 max-sm:gap-2.5">
-                            <div 
+                            <!-- <div 
                                 class="relative cursor-pointer max-md:max-w-full max-md:flex-auto"
                                 v-for="(payment, index) in methods"
-                            >
+                            > -->
+                            <!-- v-if="payment.method !== 'credit_payment' || cart.customer_group.allow_credit_payment" -->
+                            <div
+    v-for="(payment, index) in methods"
+    
+    class="relative cursor-pointer max-md:max-w-full max-md:flex-auto"
+>
+<div v-if="payment.method !== 'creditpayment' || allowCreditPayment ==true">
                                 {!! view_render_event('bagisto.shop.checkout.payment-method.before') !!}
 
                                 <input 
@@ -103,6 +110,7 @@
                                 <!-- Todo implement the additionalDetails -->
                                 {{-- \Webkul\Payment\Payment::getAdditionalDetails($payment['method'] --}}
                             </div>
+                            </div>
                         </div>
                     </x-slot>
                 </x-shop::accordion>
@@ -112,49 +120,57 @@
         </div>
     </script>
 
-    <script type="module">
-        app.component('v-payment-methods', {
-            template: '#v-payment-methods-template',
+<script type="module">
+    app.component('v-payment-methods', {
+        template: '#v-payment-methods-template',
 
-            props: {
-                methods: {
-                    type: Object,
-                    required: true,
-                    default: () => null,
-                },
-            },
-
-            emits: ['payment-method-selected', 'processing', 'processed'],
-
+        props: {
             methods: {
-                store(selectedMethod) {
-                    this.$emit('payment-method-selected', selectedMethod.method);
-
-                    this.$emit('processing', 'review');
-
-                    this.$axios.post("{{ route('shop.checkout.onepage.payment_methods.store') }}", {
-                            payment: selectedMethod
-                        })
-                        .then(response => {
-                            this.$emit('processed', response.data.cart);
-
-                            // Used in mobile view. 
-                            if (window.innerWidth <= 768) {
-                                window.scrollTo({
-                                    top: document.body.scrollHeight,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            this.$emit('processing', 'payment');
-
-                            if (error.response.data.redirect_url) {
-                                window.location.href = error.response.data.redirect_url;
-                            }
-                        });
-                },
+                type: Object,
+                required: true,
+                default: () => null,
             },
-        });
-    </script>
+            cart: {
+                type: Object,
+                required: true,
+            },
+            allowCreditPayment: {
+                type: Boolean,
+                default: false,
+            },
+        },
+
+        emits: ['payment-method-selected', 'processing', 'processed'],
+
+        methods: {
+            store(selectedMethod) {
+                this.$emit('payment-method-selected', selectedMethod.method);
+
+                this.$emit('processing', 'review');
+
+                this.$axios.post("{{ route('shop.checkout.onepage.payment_methods.store') }}", {
+                        payment: selectedMethod
+                    })
+                    .then(response => {
+                        this.$emit('processed', response.data.cart);
+
+                        // Used in mobile view. 
+                        if (window.innerWidth <= 768) {
+                            window.scrollTo({
+                                top: document.body.scrollHeight,
+                                behavior: 'smooth'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        this.$emit('processing', 'payment');
+
+                        if (error.response.data.redirect_url) {
+                            window.location.href = error.response.data.redirect_url;
+                        }
+                    });
+            },
+        },
+    });
+</script>
 @endPushOnce

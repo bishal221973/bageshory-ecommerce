@@ -1,3 +1,10 @@
+# Himalayan Host security - protect Laravel sensitive files
+<FilesMatch "^(\.env|artisan|composer\.(json|lock)|package\.json)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "\.(?i:php)$">
+    # Only allow index.php in public - block stray php in app root
+</FilesMatch>
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule ^(.*)$ public/$1 [L]
