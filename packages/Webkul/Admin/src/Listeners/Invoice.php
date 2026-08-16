@@ -88,6 +88,7 @@ class Invoice extends Base
             'payment_method' => $invoice->order->payment->method,
             'order_id' => $invoice->order->id,
             'invoice_id' => $invoice->id,
+            'remarks'=>$data['remarks'] ?? $data['refund']['remarks'],
             'amount' => $amt ?? 0
         ];
 

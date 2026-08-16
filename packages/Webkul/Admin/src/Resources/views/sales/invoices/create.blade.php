@@ -202,6 +202,8 @@
         </label>
 
     </div>
+
+   
 </div>
 
 <div
@@ -220,6 +222,24 @@
             step="0.01"
             placeholder="Enter paid amount"
         />
+
+        <x-admin::form.control-group.error control-name="paid_amount" />
+    </x-admin::form.control-group>
+</div>
+
+
+<div class="mt-5">
+     <x-admin::form.control-group>
+        <x-admin::form.control-group.label>
+            Remarks
+        </x-admin::form.control-group.label>
+
+        <x-admin::form.control-group.control
+            type="textarea"
+            name="remarks"
+            placeholder="Enter remarks"
+        />
+
 
         <x-admin::form.control-group.error control-name="paid_amount" />
     </x-admin::form.control-group>

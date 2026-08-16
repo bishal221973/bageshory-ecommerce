@@ -251,6 +251,21 @@
 
                                     <x-admin::form.control-group.error control-name="refund[shipping]" />
                                 </x-admin::form.control-group>
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label>
+                                       Remarks
+                                    </x-admin::form.control-group.label>
+                                                            <!-- {{ core()->formatBasePrice(($item->base_total + $item->base_tax_amount - $item->base_discount_amount)-$order->base_grand_total_invoiced) }} -->
+
+                                    <x-admin::form.control-group.control
+                                        type="textarea"
+                                        name="refund[remarks]"
+                                        v-model="refund.remarks"
+                                        label="Remarks"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="refund[shipping]" />
+                                </x-admin::form.control-group>
 
                                 
                             </div>
