@@ -189,6 +189,36 @@ class OrderDataGrid extends DataGrid
             'sortable' => false,
         ]);
         $this->addColumn([
+            'index'             => 'payment_status',
+            'label'             => 'Payment Status',
+            'type'              => 'string',
+            'searchale'        => true,
+            'filterable'        => false,
+            'filterable_type'   => 'dropdown',
+            'filterable_options' => [
+                [
+                    'label' => 'Paid',
+                    'value' => 'Paid',
+                ],
+                [
+                    'label' => 'Partially Paid',
+                    'value' => 'Partially Paid',
+                ],
+                [
+                    'label' => 'Unpaid',
+                    'value' => 'Unpaid',
+                ],
+            ],
+            'sortable' => true,
+            'closure' => function ($row) {
+                return match ($row->payment_status) {
+                    'Paid' => '<b style="color:green">Paid</b>',
+                    'Partially Paid' => '<b style="color:orange">Partially Paid</b>',
+                    default => '<b style="color:red">Unpaid</b>',
+                };
+            },
+        ]);
+        $this->addColumn([
             'index' => 'base_grand_total',
             'label' => trans('admin::app.sales.orders.index.datagrid.grand-total'),
             'type' => 'string',

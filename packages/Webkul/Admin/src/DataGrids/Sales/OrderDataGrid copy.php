@@ -33,6 +33,7 @@ class OrderDataGrid extends DataGrid
                 DB::raw('GROUP_CONCAT(' . DB::getTablePrefix() . 'order_payment.method SEPARATOR "|") as method'),
                 'orders.increment_id',
                 'orders.base_grand_total',
+                'orders.grand_total_invoiced',
                 'orders.created_at',
                 'channel_name',
                 'channel_id',
