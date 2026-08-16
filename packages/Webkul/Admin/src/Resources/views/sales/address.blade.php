@@ -11,13 +11,15 @@
     >
     </p>
 
-    @if ($address->vat_id)
+    <!-- <p>{{$address}}</p> -->
+
+    <!-- @if ($address->vat_id)
         <p 
             class="font-semibold leading-6 text-gray-800 dark:text-white"
-            v-text="'{{ $address->vat_id }}'"
         >
+        {{$address?->vat_id}}
         </p>
-    @endif
+    @endif -->
 
     <p 
         class="!leading-6 text-gray-600 dark:text-gray-300"

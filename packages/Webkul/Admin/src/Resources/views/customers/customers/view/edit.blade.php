@@ -82,25 +82,47 @@
                                 <x-admin::form.control-group.error control-name="last_name" />
                             </x-admin::form.control-group>
                         </div>
+
+                        <div class="flex gap-4 max-sm:flex-wrap">
+                            <!-- Email -->
+                            <x-admin::form.control-group class="w-full">
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.customers.customers.view.edit.email')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="email"
+                                    name="email"
+                                    ::value="customer.email"
+                                    id="email"
+                                    rules="required|email"
+                                    :label="trans('admin::app.customers.customers.view.edit.email')"
+                                    placeholder="email@example.com"
+                                />
+
+                                <x-admin::form.control-group.error control-name="email" />
+                            </x-admin::form.control-group>
+
+
+                            <x-admin::form.control-group class="w-full">
+                                <x-admin::form.control-group.label>
+                                    VAT/PAN Number
+                                </x-admin::form.control-group.label>
+                
+                                <x-admin::form.control-group.control
+                                    name="vat_id"
+                                    ::value="customer.vat_id"
+                                    id="vat_id"
+                                    rules="required"
+                                    label="VAT ID"
+                                    placeholder="VAT ID"
+                                />
+                
+                                <x-admin::form.control-group.error control-name="email" />
+                            </x-admin::form.control-group>
+                        </div>
             
-                        <!-- Email -->
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.customers.customers.view.edit.email')
-                            </x-admin::form.control-group.label>
-            
-                            <x-admin::form.control-group.control
-                                type="email"
-                                name="email"
-                                ::value="customer.email"
-                                id="email"
-                                rules="required|email"
-                                :label="trans('admin::app.customers.customers.view.edit.email')"
-                                placeholder="email@example.com"
-                            />
-            
-                            <x-admin::form.control-group.error control-name="email" />
-                        </x-admin::form.control-group>
+                        
             
                         <div class="flex gap-4 max-sm:flex-wrap">
                             <!-- Phone -->

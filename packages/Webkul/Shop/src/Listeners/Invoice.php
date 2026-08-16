@@ -13,7 +13,7 @@ class Invoice extends Base
      * @param  string|null  $duplicateInvoiceEmail
      * @return void
      */
-    public function afterCreated($invoice, $duplicateInvoiceEmail = null)
+    public function afterCreated($invoice, $duplicateInvoiceEmail = null,$data)
     {
         try {
             if (! core()->getConfigData('emails.general.notifications.emails.general.notifications.new_invoice')) {

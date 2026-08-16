@@ -65,6 +65,7 @@ class InvoiceController extends Controller
      */
     public function store(int $orderId)
     {
+        // return request()->payment_status;
         $order = $this->orderRepository->findOrFail($orderId);
 
         if (! $order->canInvoice()) {

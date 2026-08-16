@@ -64,7 +64,6 @@ Route::prefix('sales')->group(function () {
         Route::get('', 'index')->name('admin.sales.refunds.index');
 
         Route::post('create/{order_id}', 'store')->name('admin.sales.refunds.store');
-        Route::post('payment/create/{order_id}', 'storePayment')->name('admin.sales.payment.store');
 
         Route::post('update-totals/{order_id}', 'updateTotals')->name('admin.sales.refunds.update_totals');
 

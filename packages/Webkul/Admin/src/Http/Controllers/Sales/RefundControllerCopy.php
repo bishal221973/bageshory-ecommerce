@@ -11,7 +11,6 @@ use Webkul\Sales\Exceptions\InvalidRefundQuantityException;
 use Webkul\Sales\Repositories\OrderItemRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Repositories\RefundRepository;
-use Illuminate\Support\Facades\Event;
 
 class RefundController extends Controller
 {
@@ -57,52 +56,6 @@ class RefundController extends Controller
      *
      * @return Response
      */
-    public function storePayment(int $orderId)
-    {
-        // return request();
-        $order = $this->orderRepository->findOrFail($orderId);
-
-        $invoice = $order->invoices()->first();
-
-        if (! $invoice) {
-            return redirect()->back()->with('error', 'Invoice not found.');
-        }
-
-        if (! $order->canRefund()) {
-            session()->flash('error', trans('admin::app.sales.refunds.create.creation-error'));
-
-            return redirect()->back();
-        }
-
-        $this->validate(request(), [
-            'refund.items' => 'array',
-            'refund.items.*' => 'required|numeric|min:0',
-        ]);
-
-        $data = request()->all();
-
-        // return $data;
-
-        if (! isset($data['refund']['shipping'])) {
-            $data['refund']['shipping'] = 0;
-        }
-
-        // return $data['refund']['shipping'];
-
-        $amt = $order->grand_total_invoiced + $data['refund']['shipping'];
-        $amt1 = $order->base_grand_total_invoiced + $data['refund']['shipping'];
-
-        $order->grand_total_invoiced = $amt;
-
-        $order->base_grand_total_invoiced = $amt1;
-        $order->save();
-
-        session()->flash('success', 'Payment have been created');
-
-        Event::dispatch('sales.invoice.save.after', [$invoice, null, $data]);
-
-        return redirect()->route('admin.sales.orders.view', $orderId);
-    }
     public function store(int $orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);

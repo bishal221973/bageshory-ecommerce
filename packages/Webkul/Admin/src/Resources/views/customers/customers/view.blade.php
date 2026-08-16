@@ -138,9 +138,9 @@
             {!! view_render_event('bagisto.admin.customers.customers.view.filters.after') !!}
 
             <!-- Content -->
-            <div class="mt-3.5 flex gap-2.5 max-xl:flex-wrap">
+            <div class="mt-3.5 flex gap-2.5 max-xl:flex-wrap ">
                 <!-- Left Component -->
-                <div class="flex flex-1 flex-col gap-2 max-xl:flex-auto">
+                <div class="flex flex-1 flex-col gap-2 max-xl:flex-auto w-[50vw] bg-red-500">
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.orders.before') !!}
                     
                     @include('admin::customers.customers.view.orders')
@@ -151,6 +151,7 @@
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.invoices.before') !!}
 
                     @include('admin::customers.customers.view.invoices')
+                    @include('admin::customers.customers.view.transaction')
 
                     {!! view_render_event('bagisto.admin.customers.customers.view.card.invoices.after') !!}
 
@@ -220,6 +221,11 @@
 
                                     <p class="text-gray-600 dark:text-gray-300">
                                         @{{ "@lang('admin::app.customers.customers.view.group')".replace(':group_code', customer.group?.name ?? 'N/A') }}
+                                    </p>
+                                    <p class="text-gray-600 dark:text-gray-300">
+                                        VAT/PAN Number - @{{customer.vat_id}}
+                                        <!-- @{{ "@lang('admin::app.customers.customers.view.group')".replace(':group_code', customer.vat_id ?? 'N/A') }} -->
+                                        <!-- @{{ "@lang('admin::app.customers.customers.view.group')".replace(':group_code', customer.vat_id ?? 'N/A') }} -->
                                     </p>
                                 </div>
                             </x-slot:content>

@@ -18,6 +18,7 @@ use Webkul\Customer\Repositories\CustomerGroupRepository;
 use Webkul\Sales\Repositories\OrderCommentRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -76,6 +77,8 @@ class OrderController extends Controller
      */
     public function store(int $cartId)
     {
+       Log::info('Shipping Address:', "hlo");
+
         $cart = $this->cartRepository->findOrFail($cartId);
 
         Cart::setCart($cart);
@@ -105,7 +108,7 @@ class OrderController extends Controller
         }
 
         $data = (new OrderResource($cart))->jsonSerialize();
-
+        // dd($data);
         $order = $this->orderRepository->create($data);
 
         Cart::removeCart($cart);

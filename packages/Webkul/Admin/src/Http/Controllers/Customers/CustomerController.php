@@ -13,6 +13,7 @@ use Webkul\Admin\DataGrids\Customers\CustomerDataGrid;
 use Webkul\Admin\DataGrids\Customers\View\InvoiceDataGrid;
 use Webkul\Admin\DataGrids\Customers\View\OrderDataGrid;
 use Webkul\Admin\DataGrids\Customers\View\ReviewDataGrid;
+use Webkul\Admin\DataGrids\Customers\View\TransactionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
@@ -38,6 +39,7 @@ class CustomerController extends Controller
      * Ajax request for reviews.
      */
     public const REVIEWS = 'reviews';
+    public const TRANSACTIONS = 'transactions';
 
     /**
      * Static pagination count.
@@ -83,7 +85,7 @@ class CustomerController extends Controller
             'last_name' => 'string|required',
             'gender' => 'required',
             'channel_id' => 'required|integer',
-            'email' => 'required|unique:customers,email,NULL,id,channel_id,'.request('channel_id'),
+            'email' => 'required|unique:customers,email,NULL,id,channel_id,' . request('channel_id'),
             'date_of_birth' => 'date|before:today',
             'phone' => ['unique:customers,phone', new PhoneNumber],
         ]);
@@ -104,6 +106,7 @@ class CustomerController extends Controller
             'phone',
             'customer_group_id',
             'channel_id',
+            'vat_id'
         ]));
 
         if (empty($data['phone'])) {
@@ -143,9 +146,10 @@ class CustomerController extends Controller
             'first_name' => 'string|required',
             'last_name' => 'string|required',
             'gender' => 'required',
-            'email' => 'required|unique:customers,email,'.$id,
+            'email' => 'required|unique:customers,email,' . $id,
             'date_of_birth' => 'date|before:today',
-            'phone' => ['unique:customers,phone,'.$id, new PhoneNumber],
+            'phone' => ['unique:customers,phone,' . $id, new PhoneNumber],
+            'vat_id'=>'nullable'
         ]);
 
         $data = request()->only([
@@ -158,6 +162,7 @@ class CustomerController extends Controller
             'customer_group_id',
             'status',
             'is_suspended',
+            'vat_id'
         ]);
 
         if (empty($data['phone'])) {
@@ -253,10 +258,15 @@ class CustomerController extends Controller
      */
     public function show(int $id)
     {
-        $customer = $this->customerRepository->with(['addresses', 'group'])->findOrFail($id);
+        $customer = $this->customerRepository->with(['addresses', 'group', 'orders.transactions'])->findOrFail($id);
 
         $groups = $this->customerGroupRepository->findWhere([['code', '<>', 'guest']]);
-
+        $transactions = $customer->orders
+            ->flatMap(function ($order) {
+                return $order->transactions;
+            })
+            ->sortByDesc('created_at')
+            ->values();
         if (request()->ajax()) {
             switch (request()->query('type')) {
                 case self::ORDERS:
@@ -267,10 +277,12 @@ class CustomerController extends Controller
 
                 case self::REVIEWS:
                     return datagrid(ReviewDataGrid::class)->process();
+                case self::TRANSACTIONS:
+                    return datagrid(TransactionDataGrid::class)->process();
             }
         }
 
-        return view('admin::customers.customers.view', compact('customer', 'groups'));
+        return view('admin::customers.customers.view', compact('customer', 'groups', 'transactions'));
     }
 
     /**
@@ -281,8 +293,8 @@ class CustomerController extends Controller
     public function search()
     {
         $customers = $this->customerRepository->scopeQuery(function ($query) {
-            return $query->where('email', 'like', '%'.urldecode(request()->input('query')).'%')
-                ->orWhere(DB::raw('CONCAT(first_name, " ", last_name)'), 'like', '%'.urldecode(request()->input('query')).'%')
+            return $query->where('email', 'like', '%' . urldecode(request()->input('query')) . '%')
+                ->orWhere(DB::raw('CONCAT(first_name, " ", last_name)'), 'like', '%' . urldecode(request()->input('query')) . '%')
                 ->orderBy('created_at', 'desc');
         })->paginate(self::COUNT);
 

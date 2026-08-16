@@ -8,10 +8,11 @@
 </v-create-invoices>
 
 @pushOnce('scripts')
-<script
-    type="text/x-template"
-    id="v-create-invoices-template">
-    <div>
+    <script
+        type="text/x-template"
+        id="v-create-invoices-template"
+    >
+        <div>
             <div
                 class="transparent-button px-1 py-1.5 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800"
                     @click="$refs.invoice.open()"
@@ -148,8 +149,8 @@
                             @endforeach
 
                             <!-- Create Transaction Button -->
-                            <x-admin::form.control-group class="!mb-0  w-max cursor-pointer select-none items-center gap-2.5 p-1.5">
-                                <!-- <x-admin::form.control-group.control
+                            <x-admin::form.control-group class="!mb-0 flex w-max cursor-pointer select-none items-center gap-2.5 p-1.5">
+                                <x-admin::form.control-group.control
                                     type="checkbox"
                                     name="can_create_transaction"
                                     id="can_create_transaction"
@@ -162,70 +163,7 @@
                                     class="cursor-pointer !text-sm !font-semibold !text-gray-600 dark:!text-gray-300"
                                 >
                                     @lang('admin::app.sales.invoices.create.create-transaction')
-                                </label> -->
-                                <div>
-
-                                <div class="mt-4">
-                               
-    <label class="font-semibold">Payment Status</label>
-
-    <div class="mt-2 flex gap-4">
-
-        <label>
-            <input
-                type="radio"
-                v-model="paymentStatus"
-                name="payment_status"
-                value="paid"
-            >
-            Paid
-        </label>
-
-        <label>
-            <input
-                type="radio"
-                v-model="paymentStatus"
-                name="payment_status"
-                value="partial"
-            >
-            Partial Payment
-        </label>
-
-        <label>
-            <input
-                type="radio"
-                v-model="paymentStatus"
-                name="payment_status"
-                value="unpaid"
-            >
-            Unpaid
-        </label>
-
-    </div>
-</div>
-
-<div
-    v-show="paymentStatus === 'partial'"
-    class="mt-3"
->
-    <x-admin::form.control-group>
-        <x-admin::form.control-group.label>
-            Paid Amount
-        </x-admin::form.control-group.label>
-
-        <x-admin::form.control-group.control
-            type="number"
-            name="paid_amount"
-            rules="min_value:0"
-            step="0.01"
-            placeholder="Enter paid amount"
-        />
-
-        <x-admin::form.control-group.error control-name="paid_amount" />
-    </x-admin::form.control-group>
-</div>
-
-                                </div>
+                                </label>
                             </x-admin::form.control-group>
                         </div>
                     </x-slot>
@@ -234,14 +172,9 @@
         </div>
     </script>
 
-<script type="module">
-    app.component('v-create-invoices', {
-        template: '#v-create-invoices-template',
-        data() {
-            return {
-                paymentStatus: 'paid',
-            };
-        }
-    });
-</script>
+    <script type="module">
+        app.component('v-create-invoices', {
+            template: '#v-create-invoices-template',
+        });
+    </script>
 @endPushOnce

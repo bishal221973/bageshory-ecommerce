@@ -106,11 +106,6 @@
                 </div>
             @endif
 
-            @if( !$order->canInvoice())
-
-                @include('admin::sales.payments.create')
-            @endif
-
             {!! view_render_event('bagisto.admin.sales.order.page_action.after', ['order' => $order]) !!}
         </div>
 
@@ -637,12 +632,6 @@
                                 </p>
 
                                 {!! view_render_event('bagisto.admin.sales.order.customer_group.after', ['order' => $order]) !!}
-                                 <p
-                                    class="text-gray-600 dark:text-gray-300"
-                                    v-pre
-                                >
-                                    VAT/PAV Number : {{ $order->customer?->vat_id }}
-                                </p>
                             </div>
                         </div>
 

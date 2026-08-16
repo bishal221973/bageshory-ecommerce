@@ -45,10 +45,6 @@ class InvoiceRepository extends Repository
     {
         DB::beginTransaction();
 
-        // dd($data);
-        // return $data;
-
-
         try {
             Event::dispatch('sales.invoice.save.before', $data);
 
@@ -60,14 +56,6 @@ class InvoiceRepository extends Repository
                 $state = $invoiceState;
             } else {
                 $state = 'paid';
-            }
-
-            if ($data['payment_status'] == 'paid') {
-                $state = 'paid';
-            } else if ($data['payment_status'] == 'partial') {
-                $state = 'partial_paid';
-            } else {
-                $state = 'unpaid';
             }
 
             $invoice = $this->model->create([
@@ -180,7 +168,7 @@ class InvoiceRepository extends Repository
 
             $this->collectTotals($invoice);
 
-            $this->orderRepository->collectTotals($order, $data);
+            $this->orderRepository->collectTotals($order);
 
             if (isset($orderState)) {
                 $this->orderRepository->updateOrderStatus($order, $orderState);
@@ -191,13 +179,9 @@ class InvoiceRepository extends Repository
             /**
              * Temporary property has been used to avoid request helper usage in listener.
              */
-            if ($data['payment_status'] == 'paid') {
-                $invoice->can_create_transaction = request()->input('can_create_transaction') == '1';
-            } else if ($data['payment_status'] == 'partial') {
-                $invoice->can_create_transaction = request()->input('can_create_transaction') == '1';
-            }
-            // $invoice->can_create_transaction = request()->has('can_create_transaction') && request()->input('can_create_transaction') == '1';
-            Event::dispatch('sales.invoice.save.after', [$invoice,'',$data]);
+            $invoice->can_create_transaction = request()->has('can_create_transaction') && request()->input('can_create_transaction') == '1';
+
+            Event::dispatch('sales.invoice.save.after', $invoice);
         } catch (\Exception $e) {
             DB::rollBack();
 

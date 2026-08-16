@@ -1,9 +1,8 @@
 @pushOnce('scripts')
-    <script
-        type="text/x-template"
-        id="v-create-customer-form-template"
-    >
-        <x-admin::form
+<script
+    type="text/x-template"
+    id="v-create-customer-form-template">
+    <x-admin::form
             v-slot="{ meta, errors, handleSubmit }"
             as="div"
         >
@@ -77,23 +76,42 @@
                             <x-admin::form.control-group.error control-name="email" />
                         </x-admin::form.control-group>
 
-                        <!-- Contact Number -->
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label>
-                                @lang('admin::app.customers.customers.index.create.contact-number')
-                            </x-admin::form.control-group.label>
+                        <div class="flex gap-4 max-sm:flex-wrap">
+                            <!-- Contact Number -->
+                            <x-admin::form.control-group class="w-full">
+                                <x-admin::form.control-group.label>
+                                    @lang('admin::app.customers.customers.index.create.contact-number')
+                                </x-admin::form.control-group.label>
 
-                            <x-admin::form.control-group.control
-                                type="text"
-                                id="phone"
-                                name="phone"
-                                rules="phone"
-                                :label="trans('admin::app.customers.customers.index.create.contact-number')"
-                                :placeholder="trans('admin::app.customers.customers.index.create.contact-number')"
-                            />
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    rules="phone"
+                                    :label="trans('admin::app.customers.customers.index.create.contact-number')"
+                                    :placeholder="trans('admin::app.customers.customers.index.create.contact-number')"
+                                />
 
-                            <x-admin::form.control-group.error control-name="phone" />
-                        </x-admin::form.control-group>
+                                <x-admin::form.control-group.error control-name="phone" />
+                            </x-admin::form.control-group>
+
+
+                            <x-admin::form.control-group class="w-full">
+                                <x-admin::form.control-group.label>
+                                    VAT/PAN Number
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    id="phone"
+                                    name="vat_id"
+                                    label="VAT ID"
+                                    placeholder="VAT ID"
+                                />
+
+                                <x-admin::form.control-group.error control-name="phone" />
+                            </x-admin::form.control-group>
+                        </div>
 
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label>
@@ -216,49 +234,55 @@
         </x-admin::form>
     </script>
 
-    <script type="module">
-        app.component('v-create-customer-form', {
-            template: '#v-create-customer-form-template',
+<script type="module">
+    app.component('v-create-customer-form', {
+        template: '#v-create-customer-form-template',
 
-            data() {
-                return {
-                    groups: @json($groups),
+        data() {
+            return {
+                groups: @json($groups),
 
-                    channels: @json($channels),
+                channels: @json($channels),
 
-                    isLoading: false,
-                };
+                isLoading: false,
+            };
+        },
+
+        methods: {
+            openModal() {
+                this.$refs.customerCreateModal.open();
             },
 
-            methods: {
-                openModal() {
-                    this.$refs.customerCreateModal.open();
-                },
+            create(params, {
+                resetForm,
+                setErrors
+            }) {
+                this.isLoading = true;
 
-                create(params, { resetForm, setErrors }) {
-                    this.isLoading = true;
+                this.$axios.post("{{ route('admin.customers.customers.store') }}", params)
+                    .then((response) => {
+                        this.$refs.customerCreateModal.close();
 
-                    this.$axios.post("{{ route('admin.customers.customers.store') }}", params)
-                        .then((response) => {
-                            this.$refs.customerCreateModal.close();
+                        this.$emit('customer-created', response.data.data);
 
-                            this.$emit('customer-created', response.data.data);
-
-                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
-
-                            resetForm();
-
-                            this.isLoading = false;
-                        })
-                        .catch(error => {                            
-                            this.isLoading = false;
-
-                            if (error.response.status == 422) {
-                                setErrors(error.response.data.errors);
-                            }
+                        this.$emitter.emit('add-flash', {
+                            type: 'success',
+                            message: response.data.message
                         });
-                }
+
+                        resetForm();
+
+                        this.isLoading = false;
+                    })
+                    .catch(error => {
+                        this.isLoading = false;
+
+                        if (error.response.status == 422) {
+                            setErrors(error.response.data.errors);
+                        }
+                    });
             }
-        })
-    </script>
+        }
+    })
+</script>
 @endPushOnce

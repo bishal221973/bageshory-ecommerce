@@ -22,12 +22,18 @@ class Invoice extends Base
      * @param  \Webkul\Sale\Contracts\Invoice  $invoice
      * @return void
      */
-    public function afterCreated($invoice)
+    public function afterCreated($invoice,$duplicateEmail=null, $data = null)
     {
         $this->sendMail($invoice);
 
-        if ($invoice->can_create_transaction) {
-            $this->createTransaction($invoice);
+        if(isset($data['refund']['shipping'])){
+            $this->createTransaction($invoice, $data);
+
+        }else{
+
+            if ($data['payment_status'] == 'paid' || $data['payment_status'] == 'partial') {
+                $this->createTransaction($invoice, $data);
+            }
         }
     }
 
@@ -56,9 +62,24 @@ class Invoice extends Base
      * @param  \Webkul\Sale\Contracts\Invoice  $invoice
      * @return void
      */
-    public function createTransaction($invoice)
+    public function createTransaction($invoice, $data = null)
     {
         $transactionId = md5(uniqid());
+        $amt = 0;
+
+        if(isset($data['refund']['shipping'])){
+            $amt=$data['refund']['shipping'];
+        }else{
+
+            if (($data['payment_status'] ?? null) === 'paid') {
+                $amt = $invoice->grand_total;
+            } elseif (($data['payment_status'] ?? null) === 'partial') {
+                $amt = $data['paid_amount'] ?? 0;
+            }
+        }
+
+        
+        
 
         $transactionData = [
             'transaction_id' => $transactionId,
@@ -67,7 +88,7 @@ class Invoice extends Base
             'payment_method' => $invoice->order->payment->method,
             'order_id' => $invoice->order->id,
             'invoice_id' => $invoice->id,
-            'amount' => $invoice->grand_total,
+            'amount' => $amt ?? 0
         ];
 
         $this->orderTransactionRepository->create($transactionData);

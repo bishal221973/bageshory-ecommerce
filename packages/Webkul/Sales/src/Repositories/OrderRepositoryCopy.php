@@ -12,7 +12,6 @@ use Webkul\Product\Repositories\ProductCustomizableOptionRepository;
 use Webkul\Sales\Contracts\Order as OrderContract;
 use Webkul\Sales\Generators\OrderSequencer;
 use Webkul\Sales\Models\Order;
-// use Illuminate\Support\Facades\Log;
 
 class OrderRepository extends Repository
 {
@@ -46,7 +45,7 @@ class OrderRepository extends Repository
     public function createOrderIfNotThenRetry(array $data, int $attempt = 1, ?int $maxAttempts = null)
     {
         $maxAttempts = $maxAttempts ?? core()->getConfigData('sales.order_settings.order_creation.max_retry_attempts') ?? 3;
-        // dd($data);
+
         DB::beginTransaction();
 
         try {
@@ -57,10 +56,7 @@ class OrderRepository extends Repository
             $order = $this->model->create(array_merge($data, ['increment_id' => $this->generateIncrementId()]));
 
             $order->payment()->create($data['payment']);
-           
 
-            // dd($data['shipping_address']);
-            // return;
             if (isset($data['shipping_address'])) {
                 $order->addresses()->create($data['shipping_address']);
             }
@@ -102,7 +98,7 @@ class OrderRepository extends Repository
 
             /* storing log for errors */
             Log::error(
-                'OrderRepository:createOrderIfNotThenRetry: ' . $e->getMessage(),
+                'OrderRepository:createOrderIfNotThenRetry: '.$e->getMessage(),
                 ['data' => $data, 'attempt' => $attempt, 'max_attempts' => $maxAttempts]
             );
 
@@ -349,7 +345,7 @@ class OrderRepository extends Repository
      * @param  OrderContract  $order
      * @return mixed
      */
-    public function collectTotals($order, $data)
+    public function collectTotals($order)
     {
         // order invoice total
         $order->sub_total_invoiced = $order->base_sub_total_invoiced = 0;
@@ -371,15 +367,8 @@ class OrderRepository extends Repository
             $order->base_discount_invoiced += $invoice->base_discount_amount;
         }
 
-        $paidAmount = (float) ($data['paid_amount'] ?? 0);
-        if ($data['payment_status'] == 'paid') {
-            $order->grand_total_invoiced = $order->sub_total_invoiced + $order->shipping_invoiced + $order->tax_amount_invoiced - $order->discount_invoiced;
-            $order->base_grand_total_invoiced = $order->base_sub_total_invoiced + $order->base_shipping_invoiced + $order->base_tax_amount_invoiced - $order->base_discount_invoiced;
-        } else if ($data['payment_status'] == 'partial') {
-            $order->grand_total_invoiced = $paidAmount;
-
-            $order->base_grand_total_invoiced = $paidAmount;
-        }
+        $order->grand_total_invoiced = $order->sub_total_invoiced + $order->shipping_invoiced + $order->tax_amount_invoiced - $order->discount_invoiced;
+        $order->base_grand_total_invoiced = $order->base_sub_total_invoiced + $order->base_shipping_invoiced + $order->base_tax_amount_invoiced - $order->base_discount_invoiced;
 
         // order refund total
         $order->sub_total_refunded = $order->base_sub_total_refunded = 0;
