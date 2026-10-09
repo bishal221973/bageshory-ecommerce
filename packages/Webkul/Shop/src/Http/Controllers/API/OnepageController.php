@@ -2,8 +2,10 @@
 
 namespace Webkul\Shop\Http\Controllers\API;
 
+use App\CustomerNotification;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Webkul\CartRule\Exceptions\CouponUsageLimitExceededException;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Repositories\CustomerRepository;
@@ -13,6 +15,8 @@ use Webkul\Sales\Transformers\OrderResource;
 use Webkul\Shipping\Facades\Shipping;
 use Webkul\Shop\Http\Requests\CartAddressRequest;
 use Webkul\Shop\Http\Resources\CartResource;
+// use Illuminate\Support\Facades\Log;
+
 
 class OnepageController extends APIController
 {
@@ -147,6 +151,7 @@ class OnepageController extends APIController
      */
     public function storeOrder()
     {
+    
         if (Cart::hasError()) {
             return new JsonResource([
                 'redirect' => true,
@@ -191,6 +196,15 @@ class OnepageController extends APIController
         Cart::deActivateCart();
 
         session()->flash('order_id', $order->id);
+
+         CustomerNotification::create([
+            'customer_id' => $order->customer_id,
+            'type'        => 'order_placed',
+            'title'       => 'Order Placed',
+            'message'     => "Your order #{$order->increment_id} has been placed successfully.",
+            'url'         => '#',
+            'order_id'    => $order->id,
+        ]);
 
         return new JsonResource([
             'redirect' => true,
