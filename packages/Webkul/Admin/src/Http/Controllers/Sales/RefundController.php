@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Sales;
 
+use App\CustomerNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -64,6 +65,9 @@ class RefundController extends Controller
     {
         // return request();
         $order = $this->orderRepository->findOrFail($orderId);
+        $customer = Customer::find($order->customer_id);
+
+        $deviceToken = $customer->device_token;
 
         $invoice = $order->invoices()->first();
 
@@ -104,14 +108,35 @@ class RefundController extends Controller
 
         Event::dispatch('sales.invoice.save.after', [$invoice, null, $data]);
 
+        CustomerNotification::create([
+            'customer_id' => $order->customer_id,
+            'type'        => 'order_payment',
+            'title'       => 'Payment Successful 💳',
+            'message'     => "Your payment for order #{$order->increment_id} has been recorded successfully.",
+            'url'         => '#',
+            'order_id'    => $order->id,
+        ]);
+
+        if ($deviceToken) {
+            SendFirebaseNotification::dispatch(
+                $deviceToken,
+                'Payment Successful 💳',
+                "Your payment for order #{$order->increment_id} has been recorded successfully.",
+                [
+                    'type'     => 'simple',
+                    'order_id' => (string) $order->id,
+                ]
+            );
+        }
+
         return redirect()->route('admin.sales.orders.view', $orderId);
     }
     public function store(int $orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
-        $customer=Customer::find($order->customer_id);
-        
-        $deviceToken=$customer->device_token;
+        $customer = Customer::find($order->customer_id);
+
+        $deviceToken = $customer->device_token;
 
 
         if (! $order->canRefund()) {
@@ -164,18 +189,18 @@ class RefundController extends Controller
         $this->refundRepository->create(array_merge($data, ['order_id' => $orderId]));
 
         session()->flash('success', trans('admin::app.sales.refunds.create.create-success'));
-        
-        
-        if($deviceToken){
-        
-        SendFirebaseNotification::dispatch(
-            $deviceToken,
-            "Order Refunded",
-        "Your refund for order #".$order->increment_id." has been processed successfully.",
-            [
-                'type' => 'simple',
-            ]
-        );
+
+
+        if ($deviceToken) {
+
+            SendFirebaseNotification::dispatch(
+                $deviceToken,
+                "Order Refunded",
+                "Your refund for order #" . $order->increment_id . " has been processed successfully.",
+                [
+                    'type' => 'simple',
+                ]
+            );
         }
 
         return redirect()->route('admin.sales.orders.view', $orderId);
