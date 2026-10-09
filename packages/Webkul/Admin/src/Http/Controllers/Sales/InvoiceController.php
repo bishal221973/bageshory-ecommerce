@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Sales;
 
+use App\CustomerNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -71,13 +72,13 @@ class InvoiceController extends Controller
     {
         // $order=Order::find($orderId);
         // return $customer->customer_id;
-        
+
         // return request()->payment_status;
         $order = $this->orderRepository->findOrFail($orderId);
-        $customer=Customer::find($order->customer_id);
-        
-        $deviceToken=$customer->device_token;
-       
+        $customer = Customer::find($order->customer_id);
+
+        $deviceToken = $customer->device_token;
+
         if (! $order->canInvoice()) {
             session()->flash('error', trans('admin::app.sales.invoices.create.creation-error'));
 
@@ -106,17 +107,25 @@ class InvoiceController extends Controller
         ]));
 
         session()->flash('success', trans('admin::app.sales.invoices.create.create-success'));
-        
-        if($deviceToken){
-        
-        SendFirebaseNotification::dispatch(
-            $deviceToken,
-            "Invoice Generated Successfully",
-    "Your invoice has been generated successfully for your order #".$order->increment_id,
-            [
-                'type' => 'simple',
-            ]
-        );
+
+        CustomerNotification::create([
+            'customer_id' => $order->customer_id,
+            'type'        => 'order_invoiced',
+            'title'       => 'Invoice Generated 🧾',
+            'message'     => "Your invoice has been generated successfully for order #{$order->increment_id}.",
+            'url'         => '#',
+            'order_id'    => $order->id,
+        ]);
+        if ($deviceToken) {
+
+            SendFirebaseNotification::dispatch(
+                $deviceToken,
+                "Invoice Generated Successfully",
+                "Your invoice has been generated successfully for your order #" . $order->increment_id,
+                [
+                    'type' => 'simple',
+                ]
+            );
         }
 
         return redirect()->route('admin.sales.orders.view', $orderId);
@@ -170,7 +179,7 @@ class InvoiceController extends Controller
 
         return $this->downloadPDF(
             view('shop::customers.account.orders.pdf', compact('invoice', 'orderCurrencyCode'))->render(),
-            'invoice-'.$invoice->created_at->format('d-m-Y')
+            'invoice-' . $invoice->created_at->format('d-m-Y')
         );
     }
 

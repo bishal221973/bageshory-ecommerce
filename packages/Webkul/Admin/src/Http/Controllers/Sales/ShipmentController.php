@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Sales;
 
+use App\CustomerNotification;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Sales\OrderShipmentDataGrid;
@@ -66,9 +67,9 @@ class ShipmentController extends Controller
     public function store(int $orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
-        $customer=Customer::find($order->customer_id);
-        
-        $deviceToken=$customer->device_token;
+        $customer = Customer::find($order->customer_id);
+
+        $deviceToken = $customer->device_token;
 
         if (! $order->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.create.order-error'));
@@ -94,18 +95,25 @@ class ShipmentController extends Controller
         ]));
 
         session()->flash('success', trans('admin::app.sales.shipments.create.success'));
-        
-        
-        if($deviceToken){
-        
-        SendFirebaseNotification::dispatch(
-            $deviceToken,
-             "Order Shipped 🚚",
-        "Great news! Your order #".$order->increment_id." has been shipped and is on its way.",
-            [
-                'type' => 'simple',
-            ]
-        );
+
+        CustomerNotification::create([
+            'customer_id' => $order->customer_id,
+            'type'        => 'order_shipped',
+            'title'       => 'Order Shipped 🚚',
+            'message'     => "Great news! Your order #{$order->increment_id} has been shipped and is on its way.",
+            'url'         => '#',
+            'order_id'    => $order->id,
+        ]);
+        if ($deviceToken) {
+
+            SendFirebaseNotification::dispatch(
+                $deviceToken,
+                "Order Shipped 🚚",
+                "Great news! Your order #" . $order->increment_id . " has been shipped and is on its way.",
+                [
+                    'type' => 'simple',
+                ]
+            );
         }
 
         return redirect()->route('admin.sales.orders.view', $orderId);
