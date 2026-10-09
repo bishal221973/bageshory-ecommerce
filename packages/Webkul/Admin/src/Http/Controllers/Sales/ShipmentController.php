@@ -9,6 +9,9 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Sales\Repositories\OrderItemRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Repositories\ShipmentRepository;
+use App\Services\FirebaseService;
+use App\Jobs\SendFirebaseNotification;
+use Webkul\Customer\Models\Customer;
 
 class ShipmentController extends Controller
 {
@@ -63,6 +66,9 @@ class ShipmentController extends Controller
     public function store(int $orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        $customer=Customer::find($order->customer_id);
+        
+        $deviceToken=$customer->device_token;
 
         if (! $order->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.create.order-error'));
@@ -88,6 +94,19 @@ class ShipmentController extends Controller
         ]));
 
         session()->flash('success', trans('admin::app.sales.shipments.create.success'));
+        
+        
+        if($deviceToken){
+        
+        SendFirebaseNotification::dispatch(
+            $deviceToken,
+             "Order Shipped 🚚",
+        "Great news! Your order #".$order->increment_id." has been shipped and is on its way.",
+            [
+                'type' => 'simple',
+            ]
+        );
+        }
 
         return redirect()->route('admin.sales.orders.view', $orderId);
     }

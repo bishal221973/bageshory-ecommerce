@@ -34,5 +34,9 @@
         {{ core()->country_name($address->country) }} @if ($address->postcode) ({{ $address->postcode }}) @endif<br>
 
         {{ trans('admin::app.sales.orders.view.contact') }} : {{ $address->phone }}
+        
+        @if($address->vat_id)
+        <b>Vat ID : {{ $address->vat_id }}</b>
+        @endif
     </p>
 </div>

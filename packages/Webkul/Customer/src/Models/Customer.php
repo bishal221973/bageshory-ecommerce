@@ -64,6 +64,7 @@ class Customer extends Authenticatable implements CustomerContract
         'is_verified',
         'is_suspended',
         'vat_id',
+        'device_token'
     ];
 
     /**

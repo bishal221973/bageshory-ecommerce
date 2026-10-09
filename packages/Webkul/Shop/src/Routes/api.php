@@ -13,6 +13,7 @@ use Webkul\Shop\Http\Controllers\API\ReviewController;
 use Webkul\Shop\Http\Controllers\API\WishlistController;
 
 Route::group(['prefix' => 'api'], function () {
+     
     Route::controller(CoreController::class)->prefix('core')->group(function () {
         Route::get('countries', 'getCountries')->name('shop.api.core.countries');
 
@@ -99,6 +100,10 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     Route::group(['middleware' => ['customer'], 'prefix' => 'customer'], function () {
+        Route::put('device-token', [
+        CustomerController::class,
+        'updateDeviceToken'
+    ])->name('shop.api.customers.device-token');
         Route::controller(AddressController::class)->prefix('addresses')->group(function () {
             Route::get('', 'index')->name('shop.api.customers.account.addresses.index');
 

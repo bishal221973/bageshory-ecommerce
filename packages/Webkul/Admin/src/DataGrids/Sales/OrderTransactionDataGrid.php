@@ -39,7 +39,8 @@ class OrderTransactionDataGrid extends DataGrid
                 'orders.increment_id as order_id',
                 'order_transactions.created_at as created_at',
                 'order_transactions.amount as amount',
-                'order_transactions.status as status'
+                'order_transactions.remarks as remarks',
+                'order_transactions.status as status',
             );
 
         $this->addFilter('id', 'order_transactions.id');
@@ -48,6 +49,7 @@ class OrderTransactionDataGrid extends DataGrid
         $this->addFilter('order_id', 'orders.increment_id');
         $this->addFilter('created_at', 'order_transactions.created_at');
         $this->addFilter('status', 'order_transactions.status');
+        $this->addFilter('remarks','order_transaction.remarks');
 
         return $queryBuilder;
     }
@@ -109,7 +111,7 @@ class OrderTransactionDataGrid extends DataGrid
 
         $this->addColumn([
             'index' => 'status',
-            'label' => trans('admin::app.sales.transactions.index.datagrid.status'),
+            'label' => 'Remarks',
             'type' => 'string',
             'searchable' => true,
             'filterable' => true,

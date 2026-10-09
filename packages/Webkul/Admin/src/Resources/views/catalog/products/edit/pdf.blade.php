@@ -18,7 +18,7 @@
     <x-admin::media.pdf
         name="images[files]"
         allow-multiple="true"
-        :uploaded-pdfs="json_decode($product->pdf)"
+        :uploaded-pdfs="$product->pdf"
     />
 
     <x-admin::form.control-group.error control-name='videos.files[0]' />

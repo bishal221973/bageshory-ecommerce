@@ -720,4 +720,175 @@ class Sale extends AbstractReporting
 
         return $stats ?? [];
     }
+
+
+
+    /**
+     * Get total revenue.
+     *
+     * Revenue = invoiced amount minus refunded amount.
+     */
+    public function getTotalRevenue($startDate, $endDate): float
+    {
+        return $this->orderRepository
+            ->resetModel()
+            ->whereIn('channel_id', $this->channelIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum(DB::raw(
+                'base_grand_total_invoiced - base_grand_total_refunded'
+            ));
+    }
+
+    /**
+     * Get total unpaid amount.
+     */
+    public function getTotalUnpaid($startDate, $endDate): float
+    {
+        return $this->orderRepository
+            ->resetModel()
+            ->whereIn('channel_id', $this->channelIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('payment_status', 'pending')
+            ->sum('base_grand_total');
+    }
+
+    /**
+     * Get total canceled amount.
+     */
+    public function getTotalCanceled($startDate, $endDate): float
+    {
+        return $this->orderRepository
+            ->resetModel()
+            ->whereIn('channel_id', $this->channelIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('status', 'canceled')
+            ->sum('base_grand_total');
+    }
+
+    /**
+     * Get total refunded amount.
+     */
+    public function getTotalRefunded($startDate, $endDate): float
+    {
+        return $this->orderRepository
+            ->resetModel()
+            ->whereIn('channel_id', $this->channelIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('base_grand_total_refunded');
+    }
+
+    /**
+     * Get total paid amount.
+     */
+    public function getTotalPaid($startDate, $endDate): float
+    {
+        return $this->orderRepository
+            ->resetModel()
+            ->whereIn('channel_id', $this->channelIds)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('payment_status', 'paid')
+            ->sum('base_grand_total_invoiced');
+    }
+
+
+
+
+
+
+
+    /**
+ * Retrieves total revenue and its progress.
+ */
+public function getTotalRevenueProgress(): array
+{
+    return [
+        'previous' => $previous = $this->getTotalRevenue(
+            $this->lastStartDate,
+            $this->lastEndDate
+        ),
+        'current' => $current = $this->getTotalRevenue(
+            $this->startDate,
+            $this->endDate
+        ),
+        'formatted_total' => core()->formatBasePrice($current),
+        'progress' => $this->getPercentageChange($previous, $current),
+    ];
+}
+
+/**
+ * Retrieves total unpaid amount and its progress.
+ */
+public function getTotalUnpaidProgress(): array
+{
+    return [
+        'previous' => $previous = $this->getTotalUnpaid(
+            $this->lastStartDate,
+            $this->lastEndDate
+        ),
+        'current' => $current = $this->getTotalUnpaid(
+            $this->startDate,
+            $this->endDate
+        ),
+        'formatted_total' => core()->formatBasePrice($current),
+        'progress' => $this->getPercentageChange($previous, $current),
+    ];
+}
+
+/**
+ * Retrieves total canceled amount and its progress.
+ */
+public function getTotalCanceledProgress(): array
+{
+    return [
+        'previous' => $previous = $this->getTotalCanceled(
+            $this->lastStartDate,
+            $this->lastEndDate
+        ),
+        'current' => $current = $this->getTotalCanceled(
+            $this->startDate,
+            $this->endDate
+        ),
+        'formatted_total' => core()->formatBasePrice($current),
+        'progress' => $this->getPercentageChange($previous, $current),
+    ];
+}
+
+/**
+ * Retrieves total refunded amount and its progress.
+ */
+public function getTotalRefundedProgress(): array
+{
+    return [
+        'previous' => $previous = $this->getTotalRefunded(
+            $this->lastStartDate,
+            $this->lastEndDate
+        ),
+        'current' => $current = $this->getTotalRefunded(
+            $this->startDate,
+            $this->endDate
+        ),
+        'formatted_total' => core()->formatBasePrice($current),
+        'progress' => $this->getPercentageChange($previous, $current),
+    ];
+}
+
+/**
+ * Retrieves total paid amount and its progress.
+ */
+public function getTotalPaidProgress(): array
+{
+    return [
+        'previous' => $previous = $this->getTotalPaid(
+            $this->lastStartDate,
+            $this->lastEndDate
+        ),
+        'current' => $current = $this->getTotalPaid(
+            $this->startDate,
+            $this->endDate
+        ),
+        'formatted_total' => core()->formatBasePrice($current),
+        'progress' => $this->getPercentageChange($previous, $current),
+    ];
+}
+
 }

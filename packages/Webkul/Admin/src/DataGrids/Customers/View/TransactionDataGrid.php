@@ -26,7 +26,8 @@ class TransactionDataGrid extends DataGrid
                 'orders.increment_id as order_id',
                 'order_transactions.created_at as created_at',
                 'order_transactions.amount as amount',
-                'order_transactions.status as status'
+                // 'order_transactions.status as status',
+                'order_transactions.remarks as remarks',
             ) ->where('orders.customer_id', request()->route('id'));;
 
         $this->addFilter('id', 'order_transactions.id');
@@ -34,7 +35,7 @@ class TransactionDataGrid extends DataGrid
         $this->addFilter('invoice_id', 'order_transactions.invoice_id');
         $this->addFilter('order_id', 'orders.increment_id');
         $this->addFilter('created_at', 'order_transactions.created_at');
-        $this->addFilter('status', 'order_transactions.status');
+        // $this->addFilter('status', 'order_transactions.status');
 
         return $queryBuilder;
     }
@@ -92,9 +93,17 @@ class TransactionDataGrid extends DataGrid
             },
         ]);
 
+        // $this->addColumn([
+        //     'index' => 'status',
+        //     'label' => trans('admin::app.sales.transactions.index.datagrid.status'),
+        //     'type' => 'string',
+        //     'searchable' => true,
+        //     'filterable' => true,
+        //     'sortable' => true,
+        // ]);
         $this->addColumn([
-            'index' => 'status',
-            'label' => trans('admin::app.sales.transactions.index.datagrid.status'),
+            'index' => 'remarks',
+            'label' => 'Remarks',
             'type' => 'string',
             'searchable' => true,
             'filterable' => true,
@@ -119,15 +128,15 @@ class TransactionDataGrid extends DataGrid
      */
     public function prepareActions()
     {
-        if (bouncer()->hasPermission('sales.shipments.view')) {
-            $this->addAction([
-                'icon' => 'icon-view',
-                'title' => trans('admin::app.sales.transactions.index.datagrid.view'),
-                'method' => 'GET',
-                'url' => function ($row) {
-                    return route('admin.sales.transactions.view', $row->id);
-                },
-            ]);
-        }
+        // if (bouncer()->hasPermission('sales.shipments.view')) {
+        //     $this->addAction([
+        //         'icon' => 'icon-view',
+        //         'title' => trans('admin::app.sales.transactions.index.datagrid.view'),
+        //         'method' => 'GET',
+        //         'url' => function ($row) {
+        //             return route('admin.sales.transactions.view', $row->id);
+        //         },
+        //     ]);
+        // }
     }
 }

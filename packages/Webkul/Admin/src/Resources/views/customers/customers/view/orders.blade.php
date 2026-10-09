@@ -161,7 +161,7 @@ $totalAmount=0;
                 </div>
 
 
-                <div
+                <!-- <div
                     style="width: 100%;background-color:#f2f2f2"
                     class="w-full bg-red-500 order-b flex justify-between px-4 py-2.5">
                     <b class="text-gray-600">
@@ -170,8 +170,85 @@ $totalAmount=0;
                     <b class="text-gray-600">
                         @{{ available.records[0].total_amount }}
                     </b>
-                    
+
                 </div>
+                <hr>
+                <div
+                    style="width: 100%;background-color:#f2f2f2"
+                    class="w-full bg-red-500 order-b flex justify-between px-4 py-2.5">
+                    <b class="text-gray-600">
+                        Total Revenue:
+                    </b>
+                    <b class="text-gray-600">
+                        {{number_format($customer->orders->whereNotIn('status', ['canceled', 'closed'])->sum('base_grand_total_invoiced'),4)}}
+                    </b>
+
+                </div>
+                <hr>
+                <div
+                    style="width: 100%;background-color:#f2f2f2"
+                    class="w-full bg-red-500 order-b flex justify-between px-4 py-2.5">
+                    <b class="text-gray-600">
+                        Total Due:
+                    </b>
+                   
+                    @{{ available.records[0].total_amount }}
+                </div> -->
+                @php
+                $totalAmount = $customer->orders
+                ->sum('base_grand_total');
+
+                $totalRevenue = $customer->orders
+                ->whereNotIn('status', ['canceled', 'closed'])
+                ->sum('base_grand_total_invoiced');
+
+                $totalDue = $totalAmount - $totalRevenue;
+                @endphp
+
+
+                <div
+                    style="width: 100%; background-color:#f2f2f2"
+                    class="w-full border-b flex justify-between px-4 py-2.5">
+                    <b class="text-gray-600">
+                        Total:
+                    </b>
+
+                    <b class="text-gray-600">
+                        Rs.{{number_format($totalAmount,4)}}
+                        <!-- @{{ available.records[0]?.total_amount ?? 0 }} -->
+                    </b>
+                </div>
+
+                <hr>
+
+                <div
+                    style="width: 100%; background-color:#f2f2f2"
+                    class="w-full border-b flex justify-between px-4 py-2.5">
+                    <b class="text-gray-600">
+                        Total Revenue:
+                    </b>
+
+                    <b class="text-gray-600">
+                        Rs. {{ number_format($totalRevenue, 4) }}
+                    </b>
+                </div>
+
+                <hr>
+
+                <div
+                    style="width: 100%; background-color:#f2f2f2"
+                    class="w-full border-b flex justify-between px-4 py-2.5">
+                    <b class="text-gray-600">
+                        Total Due:
+                    </b>
+
+                    <b class="text-gray-600">
+                        Rs. {{ number_format($totalDue,4) }}
+                        <!-- @{{ Number(available.records[0]?.total_amount ?? 0) - {{ $totalRevenue }} }} -->
+                    </b>
+                </div>
+
+
             </template>
         </template>
 

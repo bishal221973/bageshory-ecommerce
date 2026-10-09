@@ -13,6 +13,10 @@ use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Core\Traits\PDFHandler;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
+use Webkul\Sales\Models\Order;
+use Webkul\Customer\Models\Customer;
+use App\Services\FirebaseService;
+use App\Jobs\SendFirebaseNotification;
 
 class InvoiceController extends Controller
 {
@@ -65,9 +69,15 @@ class InvoiceController extends Controller
      */
     public function store(int $orderId)
     {
+        // $order=Order::find($orderId);
+        // return $customer->customer_id;
+        
         // return request()->payment_status;
         $order = $this->orderRepository->findOrFail($orderId);
-
+        $customer=Customer::find($order->customer_id);
+        
+        $deviceToken=$customer->device_token;
+       
         if (! $order->canInvoice()) {
             session()->flash('error', trans('admin::app.sales.invoices.create.creation-error'));
 
@@ -96,6 +106,18 @@ class InvoiceController extends Controller
         ]));
 
         session()->flash('success', trans('admin::app.sales.invoices.create.create-success'));
+        
+        if($deviceToken){
+        
+        SendFirebaseNotification::dispatch(
+            $deviceToken,
+            "Invoice Generated Successfully",
+    "Your invoice has been generated successfully for your order #".$order->increment_id,
+            [
+                'type' => 'simple',
+            ]
+        );
+        }
 
         return redirect()->route('admin.sales.orders.view', $orderId);
     }

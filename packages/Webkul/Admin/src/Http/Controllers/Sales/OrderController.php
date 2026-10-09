@@ -20,6 +20,10 @@ use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
 use Illuminate\Support\Facades\Log;
 
+use Webkul\Customer\Models\Customer;
+use App\Services\FirebaseService;
+use App\Jobs\SendFirebaseNotification;
+
 class OrderController extends Controller
 {
     /**
@@ -209,6 +213,11 @@ class OrderController extends Controller
         ]);
 
         $validatedData['order_id'] = $id;
+        
+        $order = $this->orderRepository->findOrFail($id);
+        $customer=Customer::find($order->customer_id);
+        
+        $deviceToken=$customer->device_token;
 
         Event::dispatch('sales.order.comment.create.before');
 
@@ -217,6 +226,19 @@ class OrderController extends Controller
         Event::dispatch('sales.order.comment.create.after', $comment);
 
         session()->flash('success', trans('admin::app.sales.orders.view.comment-success'));
+        
+        
+         if($deviceToken){
+        
+        SendFirebaseNotification::dispatch(
+            $deviceToken,
+            "New Comment on Your Order",
+    'A new comment has been added to your order #' . $order->increment_id,
+            [
+                'type' => 'simple',
+            ]
+        );
+        }
 
         return redirect()->route('admin.sales.orders.view', $id);
     }

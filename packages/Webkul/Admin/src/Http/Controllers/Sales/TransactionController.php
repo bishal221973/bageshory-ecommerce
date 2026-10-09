@@ -37,6 +37,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
+        // return "Hello";
         if (request()->ajax()) {
             return datagrid(OrderTransactionDataGrid::class)->process();
         }

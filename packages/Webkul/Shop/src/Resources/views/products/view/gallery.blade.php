@@ -38,7 +38,7 @@
 
                     videos: @json(product_video() -> getVideos($product)),
 
-                    pdfs: @json(json_decode($product -> pdf ?? '[]')),
+                    pdfs: @json($product->pdf ?? []),
                 },
 
                 baseFile: {

@@ -15,6 +15,24 @@ class CustomerController extends APIController
      *
      * @return JsonResponse
      */
+     public function updateDeviceToken(Request $request)
+{
+    $request->validate([
+        'device_token' => ['required', 'string', 'max:500'],
+    ]);
+
+    $customer = auth('api')->user();
+
+    $customer->update([
+        'device_token' => $request->device_token,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Device token updated successfully.',
+        'device_token' => $customer->device_token,
+    ]);
+}
     public function login(LoginRequest $request)
     {
         if (! auth()->guard('customer')->attempt($request->only(['email', 'password']))) {

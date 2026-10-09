@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Helpers\Dashboard;
+use Webkul\Sales\Models\Order;
 
 class DashboardController extends Controller
 {
@@ -36,9 +37,15 @@ class DashboardController extends Controller
      */
     public function index()
     {
+         $orders= Order::latest();
+        $total=$orders->sum('grand_total');
+        $paid=$orders->sum('grand_total_invoiced');
         return view('admin::dashboard.index')->with([
             'startDate' => $this->dashboardHelper->getStartDate(),
             'endDate' => $this->dashboardHelper->getEndDate(),
+            'totalSales'=>$total,
+            'totalPaid'=>$paid,
+            'totalDue'=>$total-$paid,
         ]);
     }
 

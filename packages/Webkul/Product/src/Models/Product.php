@@ -41,6 +41,7 @@ class Product extends Model implements ProductContract
      */
     protected $casts = [
         'additional' => 'array',
+        'pdf' => 'array',
     ];
 
     /**

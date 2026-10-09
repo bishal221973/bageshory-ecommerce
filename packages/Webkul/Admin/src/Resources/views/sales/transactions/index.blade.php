@@ -92,7 +92,7 @@
                             <!-- Status -->
                             <p
                                 class="break-words"
-                                v-html="record.status"
+                                v-html="record.remarks"
                             >
                             </p>
 
@@ -171,6 +171,10 @@
                                     <p class="text-gray-600 dark:text-gray-300">
                                         @lang('admin::app.sales.transactions.index.view.amount')
                                     </p>
+                                    <!-- <p class="text-gray-600 dark:text-gray-300">
+                                        Remarks
+                                    </p>
+                                     -->
                                 </div>
 
                                 <div class="flex flex-col gap-y-1.5">
@@ -217,6 +221,11 @@
                                         v-text="data.amount"
                                     >
                                     </p>
+                                  <!-- <p
+                                        class="text-gray-600 dark:text-gray-300"
+                                        v-text="data.remarks"
+                                    >
+                                    </p> -->
                                 </div>
                             </div>
                         </div>
@@ -365,7 +374,9 @@
                             .then((response) => {
                                 this.$refs.transaction.open(),
 
-                                this.data = response.data.data
+                                this.data = response.data.data;
+
+                                // console.log(response)
                             })
                             .catch(error => {
                                 if (error.response.status == 422) {
